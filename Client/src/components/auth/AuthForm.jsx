@@ -19,13 +19,13 @@ export default function AuthForm({
             alt="eBarangay Logo"
             className="w-auto h-16"
           />
-          <span className="text-xl font-semibold text-gray-800">
+          <span className="text-xl text-gray-800 font-Lexend">
             eBarangay Health
           </span>
         </div>
       </div>
 
-      <h1 className="mb-8 text-3xl font-bold text-center text-gray-800">
+      <h1 className="mb-8 text-3xl font-bold text-center text-gray-800 font-Lexend">
         {title}
       </h1>
 

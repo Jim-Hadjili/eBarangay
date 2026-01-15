@@ -34,10 +34,8 @@ export default function SignIn() {
       setSuccess(true);
       setEmail("");
       setPassword("");
-      // Store token in localStorage (or cookie)
       localStorage.setItem("token", data.token);
-      // Redirect to dashboard or home page
-      navigate("/dashboard"); // Change to your desired route
+      navigate("/PatientDashboard");
     } catch (err) {
       setError(err.message);
     } finally {

@@ -1,1 +1,22 @@
+@font-face {
+  font-family: Lexend;
+  src: url("./assets/fonts/Lexend-Medium.ttf");
+}
+
 @import "tailwindcss";
+
+@theme {
+  --font-Lexend: "Lexend", sans-serif;
+}
+
+/* Hide scrollbar for horizontal carousel */
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}

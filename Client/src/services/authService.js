@@ -35,5 +35,5 @@ export const login = async ({ email, password }) => {
   if (!response.ok) {
     throw new Error(data.message || "Login failed");
   }
-  return data; // contains token and message
+  return data;
 };

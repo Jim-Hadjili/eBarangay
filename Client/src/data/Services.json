@@ -1,0 +1,58 @@
+{
+  "services": [
+    {
+      "id": "general",
+      "name": "General Check-up",
+      "description": "Consultation and basic diagnosis",
+      "icon": "Stethoscope"
+    },
+    {
+      "id": "maternity",
+      "name": "Maternity Check-up",
+      "description": "Prenatal and postnatal care",
+      "icon": "Baby"
+    },
+    {
+      "id": "vaccination",
+      "name": "Vaccination",
+      "description": "Routine immunization services",
+      "icon": "HeartPulse"
+    },
+    {
+      "id": "blood_pressure",
+      "name": "Blood Pressure Check",
+      "description": "Monitoring and recording blood pressure",
+      "icon": "Activity"
+    },
+    {
+      "id": "weight_height",
+      "name": "Weight & Height Measurement",
+      "description": "Basic body measurements for health monitoring",
+      "icon": "Scale"
+    },
+    {
+      "id": "child_checkup",
+      "name": "Child Health Check-up",
+      "description": "Routine health assessment for infants and children",
+      "icon": "Smile"
+    },
+    {
+      "id": "medical_certificate",
+      "name": "Medical Certificate",
+      "description": "Issuance of basic medical certificates",
+      "icon": "FileText"
+    },
+    {
+      "id": "minor_wound",
+      "name": "Minor Wound Treatment",
+      "description": "First aid for small cuts and minor injuries",
+      "icon": "Bandage"
+    },
+    {
+      "id": "follow_up",
+      "name": "Follow-up Consultation",
+      "description": "Return visit for previous health concerns",
+      "icon": "RefreshCw"
+    }
+  ]
+}

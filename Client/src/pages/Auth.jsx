@@ -1,7 +1,10 @@
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 
 export default function AuthLayout() {
   const location = useLocation();
+  const navigate = useNavigate();
   let image;
 
   if (location.pathname === "/") {
@@ -9,6 +12,20 @@ export default function AuthLayout() {
   } else {
     image = "/images/SignInPage.png";
   }
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        if (decoded.exp && decoded.exp * 1000 > Date.now()) {
+          navigate("/PatientDashboard");
+        }
+      } catch (err) {
+        // Invalid token, do nothing
+      }
+    }
+  }, [navigate]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-white lg:flex-row lg:bg-white lg:h-screen bg-linear-to-br lg:bg-none from-green-100 via-green-200 to-green-300">
