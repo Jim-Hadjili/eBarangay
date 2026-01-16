@@ -61,7 +61,7 @@ export default function SignIn() {
             placeholder="Email address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-3 transition-all border border-gray-200 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
+            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base transition-all border border-gray-200 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
             required
             disabled={loading}
           />
@@ -74,14 +74,14 @@ export default function SignIn() {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-3 transition-all border border-gray-200 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
+            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base transition-all border border-gray-200 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
             required
             disabled={loading}
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute text-gray-400 -translate-y-1/2 right-4 top-1/2 hover:text-gray-600"
+            className="absolute text-gray-400 -translate-y-1/2 right-3 sm:right-4 top-1/2 hover:text-gray-600"
             disabled={loading}
           >
             {/* ...SVG ICON... */}
@@ -91,7 +91,7 @@ export default function SignIn() {
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="w-5 h-5"
+              className="w-4 h-4 sm:w-5 sm:h-5"
             >
               {showPassword ? (
                 <path
@@ -112,12 +112,12 @@ export default function SignIn() {
       </AuthForm>
 
       {/* Divider */}
-      <div className="flex items-center my-6">
+      <div className="flex items-center my-4 sm:my-6">
         <div className="flex-1 border-t border-gray-300"></div>
         <div className="flex-1 border-t border-gray-300"></div>
       </div>
 
-      <p className="mt-4 text-sm text-center text-gray-600">
+      <p className="mt-3 sm:mt-4 text-xs sm:text-sm text-center text-gray-600">
         Don't have an account?{" "}
         <Link
           className="font-semibold text-green-600 cursor-pointer hover:underline"

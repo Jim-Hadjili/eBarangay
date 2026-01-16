@@ -76,7 +76,7 @@ export default function SignUp() {
         loadingText="Creating account..."
       >
         {/* Name Fields Row */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-2 sm:gap-3">
           {/* First Name Input */}
           <div>
             <input
@@ -85,7 +85,7 @@ export default function SignUp() {
               placeholder="First name"
               value={formData.firstName}
               onChange={handleChange}
-              className="w-full px-4 py-3 transition-all border border-gray-200 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
+              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base transition-all border border-gray-200 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
               required
               disabled={loading}
             />
@@ -99,7 +99,7 @@ export default function SignUp() {
               placeholder="Last name"
               value={formData.lastName}
               onChange={handleChange}
-              className="w-full px-4 py-3 transition-all border border-gray-200 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
+              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base transition-all border border-gray-200 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
               required
               disabled={loading}
             />
@@ -113,7 +113,7 @@ export default function SignUp() {
             placeholder="Email address"
             value={formData.email}
             onChange={handleChange}
-            className="w-full px-4 py-3 transition-all border border-gray-200 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
+            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base transition-all border border-gray-200 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
             required
             disabled={loading}
           />
@@ -127,14 +127,14 @@ export default function SignUp() {
             placeholder="Password"
             value={formData.password}
             onChange={handleChange}
-            className="w-full px-4 py-3 transition-all border border-gray-200 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
+            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base transition-all border border-gray-200 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
             required
             disabled={loading}
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute text-gray-400 -translate-y-1/2 right-4 top-1/2 hover:text-gray-600"
+            className="absolute text-gray-400 -translate-y-1/2 right-3 sm:right-4 top-1/2 hover:text-gray-600"
             disabled={loading}
           >
             {/* ...SVG ICON... */}
@@ -144,7 +144,7 @@ export default function SignUp() {
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="w-5 h-5"
+              className="w-4 h-4 sm:w-5 sm:h-5"
             >
               {showPassword ? (
                 <path
@@ -171,14 +171,14 @@ export default function SignUp() {
             placeholder="Confirm password"
             value={formData.confirmPassword}
             onChange={handleChange}
-            className="w-full px-4 py-3 transition-all border border-gray-200 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
+            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base transition-all border border-gray-200 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
             required
             disabled={loading}
           />
           <button
             type="button"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute text-gray-400 -translate-y-1/2 right-4 top-1/2 hover:text-gray-600"
+            className="absolute text-gray-400 -translate-y-1/2 right-3 sm:right-4 top-1/2 hover:text-gray-600"
             disabled={loading}
           >
             {/* ...SVG ICON... */}
@@ -188,7 +188,7 @@ export default function SignUp() {
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="w-5 h-5"
+              className="w-4 h-4 sm:w-5 sm:h-5"
             >
               {showConfirmPassword ? (
                 <path
@@ -209,12 +209,12 @@ export default function SignUp() {
       </AuthForm>
 
       {/* Divider */}
-      <div className="flex items-center my-6">
+      <div className="flex items-center my-4 sm:my-6">
         <div className="flex-1 border-t border-gray-300"></div>
         <div className="flex-1 border-t border-gray-300"></div>
       </div>
 
-      <p className="mt-4 text-sm text-center text-gray-600">
+      <p className="mt-3 sm:mt-4 text-xs sm:text-sm text-center text-gray-600">
         Have an account?{" "}
         <Link
           className="font-semibold text-green-600 cursor-pointer hover:underline"

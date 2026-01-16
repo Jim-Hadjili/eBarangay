@@ -30,8 +30,8 @@ export default function AuthLayout() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-white lg:flex-row lg:bg-white lg:h-screen bg-linear-to-br lg:bg-none from-green-100 via-green-200 to-green-300">
       {/* Left Side - Illustration */}
-      <div className="items-center justify-center hidden w-1/2 h-full p-12 lg:flex">
-        <div className="relative w-full">
+      <div className="items-center justify-center hidden w-1/2 h-full p-6 lg:flex xl:p-12">
+        <div className="relative w-full max-w-2xl">
           <img
             src={image}
             alt="Healthcare illustration"
@@ -39,8 +39,8 @@ export default function AuthLayout() {
           />
         </div>
       </div>
-      <div className="flex items-center justify-center w-full p-4 lg:w-1/2 lg:h-full">
-        <div className="w-full max-w-md p-6 bg-white border border-gray-300 shadow-2xl rounded-3xl">
+      <div className="flex items-center justify-center w-full p-4 sm:p-6 md:p-8 lg:w-1/2 lg:h-full lg:p-4">
+        <div className="w-full max-w-md p-4 sm:p-6 md:p-8 bg-white border border-gray-300 shadow-2xl rounded-3xl">
           <Outlet />
         </div>
       </div>
