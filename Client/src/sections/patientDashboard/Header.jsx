@@ -1,3 +1,4 @@
+import Header from "../sections/patientDashboard/Header";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { getToken, getUserFromToken, clearToken } from "../../utils/session";
