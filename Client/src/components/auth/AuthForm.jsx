@@ -20,7 +20,7 @@ export default function AuthForm({
             className="w-auto h-16"
           />
           <span className="text-xl text-gray-800 font-Lexend">
-            eBarangay Health
+            eBarangay Healthcare
           </span>
         </div>
       </div>
