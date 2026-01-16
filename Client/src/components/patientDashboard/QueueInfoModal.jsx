@@ -54,8 +54,7 @@ export default function QueueInfoModal({
                 <p className="text-sm text-orange-700">
                   You already have an active queue for{" "}
                   <span className="font-semibold">{userQueue.serviceName}</span>{" "}
-                  (<span className="font-mono">{userQueue.queueCode}</span>).
-                  You cannot join another queue today.
+                  You cannot join another queue.
                 </p>
               </div>
             </div>
@@ -97,7 +96,7 @@ export default function QueueInfoModal({
 
         {/* Queue Statistics */}
         <div className="grid grid-cols-2 gap-4 mb-6">
-          <div className="bg-linear-to-br from-blue-50 to-cyan-50 rounded-xl p-4 border border-blue-100">
+          <div className="rounded-xl p-4 border-2 border-blue-100">
             <div className="flex items-center gap-2 mb-2">
               <FontAwesomeIcon
                 icon={faUsers}
@@ -117,7 +116,7 @@ export default function QueueInfoModal({
             )}
           </div>
 
-          <div className="bg-linear-to-br from-purple-50 to-pink-50 rounded-xl p-4 border border-purple-100">
+          <div className="rounded-xl p-4 border-2 border-purple-100">
             <div className="flex items-center gap-2 mb-2">
               <FontAwesomeIcon
                 icon={faHashtag}
@@ -139,9 +138,9 @@ export default function QueueInfoModal({
 
         {/* Action Button */}
         <button
-          className={`w-full py-3.5 rounded-xl font-semibold text-white transition-all transform ${
+          className={`w-full py-3.5 rounded-xl font-semibold text-white  ${
             canJoinQueue
-              ? "bg-linear-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
+              ? "bg-blue-600 hover:bg-blue-700 hover:shadow-lg cursor-pointer"
               : "bg-gray-300 cursor-not-allowed"
           }`}
           onClick={onJoinQueue}

@@ -7,8 +7,10 @@ export default function ServicesList({
   onServiceClick,
 }) {
   return (
-    <div className="bg-white rounded-2xl p-8 shadow flex-1">
-      <h2 className="text-xl font-semibold mb-6">Select Healthcare Service</h2>
+    <div className="bg-white rounded-2xl p-8 drop-shadow-md border border-gray-200 flex-1">
+      <h2 className="text-xl font-semibold mb-4 -ml-4 md:ml-0">
+        Select Healthcare Service
+      </h2>
       {loading ? (
         <div>Loading services...</div>
       ) : services.length === 0 ? (
@@ -19,13 +21,13 @@ export default function ServicesList({
       ) : (
         <>
           {/* Mobile: Horizontal Carousel */}
-          <div className="md:hidden overflow-x-auto scrollbar-hide -mx-8 px-8">
+          <div className="md:hidden overflow-x-auto scrollbar-hide -mx-4 py-2">
             <div className="flex gap-4 pb-4">
               {services.map((service) => (
                 <div
                   key={service._id}
                   onClick={() => onServiceClick(service)}
-                  className="cursor-pointer flex-shrink-0 w-[280px]"
+                  className="cursor-pointer shrink-0 w-70"
                 >
                   <ServiceOption
                     service={service}

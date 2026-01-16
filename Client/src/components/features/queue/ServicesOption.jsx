@@ -1,15 +1,17 @@
 import OptionCard from "../../ui/OptionCard";
+import { getServiceIcon } from "../../../utils/serviceIcons";
 
 const ServiceOption = ({ service, selectedService, onSelect }) => {
-  const isSelected = selectedService === service.id;
+  const isSelected = selectedService === service._id;
+  const icon = getServiceIcon(service);
 
   return (
     <OptionCard
       title={service.name}
       description={service.description}
-      icon={service.icon}
+      icon={icon}
       selected={isSelected}
-      onSelect={() => onSelect(service.id)}
+      onSelect={() => onSelect(service._id)}
     />
   );
 };

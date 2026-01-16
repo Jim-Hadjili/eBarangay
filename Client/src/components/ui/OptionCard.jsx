@@ -1,9 +1,11 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 const OptionCard = ({
   title,
   description,
   selected = false,
   onSelect,
-  icon: Icon,
+  icon,
 }) => {
   return (
     <button
@@ -11,26 +13,24 @@ const OptionCard = ({
       onClick={onSelect}
       className={`
         w-full h-full min-h-35 text-left p-5 rounded-xl border
-        transition-all duration-200
+        transition-all duration-200 cursor-pointer
         focus:outline-none focus:ring-2 focus:ring-blue-500
         ${
           selected
             ? "border-blue-600 bg-blue-50 shadow-md"
-            : "border-gray-200 hover:border-blue-400 hover:shadow-sm"
+            : "border-gray-200 hover:border-green-400 hover:shadow-sm"
         }
       `}
       aria-pressed={selected}
     >
-      <div className="flex items-start gap-4 h-full">
-        {Icon && (
+      <div className="flex flex-col items-start gap-4 h-full">
+        {icon && (
           <div
             className={`p-2 rounded-lg shrink-0 ${
-              selected
-                ? "bg-blue-100 text-blue-600"
-                : "bg-gray-100 text-gray-500"
+              selected ? "bg-blue-600 text-white" : "bg-green-500 text-white"
             }`}
           >
-            <Icon size={20} />
+            <FontAwesomeIcon icon={icon} size="lg" />
           </div>
         )}
 
