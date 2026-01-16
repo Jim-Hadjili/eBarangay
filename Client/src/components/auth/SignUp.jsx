@@ -1,6 +1,6 @@
 // src/auth/Register.jsx
 import { useState, useEffect } from "react";
-import AuthForm from "../Auth/AuthForm";
+import AuthForm from "./AuthForm";
 import { register } from "../../services/authService";
 import { Link } from "react-router-dom";
 

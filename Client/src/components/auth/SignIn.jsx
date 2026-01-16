@@ -1,6 +1,6 @@
 // src/auth/Login.jsx
 import { useState, useEffect } from "react";
-import AuthForm from "../Auth/AuthForm";
+import AuthForm from "./AuthForm";
 import { login } from "../../services/authService";
 import { Link, useNavigate } from "react-router-dom";
 
