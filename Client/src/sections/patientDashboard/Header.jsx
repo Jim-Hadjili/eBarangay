@@ -70,7 +70,7 @@ export default function Header() {
                 className="w-auto h-10 md:h-14"
               />
               <span className="text-base font-bold text-gray-900 sm:text-lg md:text-2xl font-Lexend sm:inline">
-                eBarangay Health
+                eBarangay Healthcare
               </span>
             </div>
 
