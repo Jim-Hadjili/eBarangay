@@ -5,6 +5,7 @@ import {
   faInfoCircle,
   faXmark,
   faCheck,
+  faSpinner,
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function CancelQueueModal({
@@ -12,6 +13,7 @@ export default function CancelQueueModal({
   onClose,
   onConfirm,
   queueInfo,
+  isCancelling = false, // Add this prop
 }) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="default">
@@ -114,16 +116,34 @@ export default function CancelQueueModal({
           <button
             onClick={onClose}
             className="flex-1 flex text-sm md:text-base items-center justify-center gap-2 px-4 py-3 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition font-medium cursor-pointer"
+            disabled={isCancelling}
           >
             <FontAwesomeIcon icon={faCheck} className="mr-2" />
             Keep Queue
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 flex text-sm md:text-base items-center justify-center gap-2 px-4 py-3 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition font-medium cursor-pointer"
+            className={`flex-1 flex text-sm md:text-base items-center justify-center gap-2 px-4 py-3 rounded-lg transition font-medium ${
+              isCancelling
+                ? "bg-red-200 text-red-400 cursor-not-allowed"
+                : "bg-red-100 text-red-600 hover:bg-red-200 cursor-pointer"
+            }`}
+            disabled={isCancelling}
           >
-            <FontAwesomeIcon icon={faXmark} className="mr-2" />
-            Cancel Queue
+            {isCancelling ? (
+              <>
+                <FontAwesomeIcon
+                  icon={faSpinner}
+                  className="animate-spin mr-2"
+                />
+                Cancelling...
+              </>
+            ) : (
+              <>
+                <FontAwesomeIcon icon={faXmark} className="mr-2" />
+                Cancel Queue
+              </>
+            )}
           </button>
         </div>
       </div>

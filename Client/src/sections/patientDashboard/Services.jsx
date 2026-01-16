@@ -8,7 +8,9 @@ import QueueCard from "../../components/patientDashboard/QueueCard";
 import QueueInfoModal from "../../components/patientDashboard/QueueInfoModal";
 import YourTurnModal from "../../components/patientDashboard/YourTurnModal";
 import CancelQueueModal from "../../components/modals/CancelQueueModal";
-import LoadingModal from "../../components/modals/LoadingModal"; // Add this import
+import NotificationModal from "../../components/modals/NotificationModal";
+import LoadingModal from "../../components/modals/LoadingModal";
+import ViewMedicalRecordsButton from "../../components/patientDashboard/ViewMedicalRecordsButton";
 
 export default function Services() {
   const { getFullName } = useAuth();
@@ -33,44 +35,76 @@ export default function Services() {
   // Modal state
   const [modalOpen, setModalOpen] = useState(false);
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
-  const [refreshLoading, setRefreshLoading] = useState(false); // Add this state
+  const [refreshLoading, setRefreshLoading] = useState(false);
+  const [openingServiceLoading, setOpeningServiceLoading] = useState(false); // New state
+  const [joiningQueue, setJoiningQueue] = useState(false);
+  const [cancellingQueue, setCancellingQueue] = useState(false); // Add this state
+  const [notification, setNotification] = useState({
+    open: false,
+    type: "success",
+    title: "",
+    message: "",
+  });
 
   const handleServiceClick = async (service) => {
+    setOpeningServiceLoading(true);
     await fetchQueueForService(service);
+    setOpeningServiceLoading(false);
     setModalOpen(true);
   };
 
   const handleJoinQueue = async () => {
+    setJoiningQueue(true);
     const result = await joinQueue(selectedService._id);
+    setJoiningQueue(false);
+
     if (result.success) {
-      alert(`Success! Your queue number is ${result.data.queue.queueCode}`);
+      setNotification({
+        open: true,
+        type: "success",
+        title: "Joined Queue Successfully",
+        message: `Your queue number is ${result.data.queue.queueCode}`,
+      });
       setModalOpen(false);
     } else {
-      alert(result.message);
+      setNotification({
+        open: true,
+        type: "error",
+        title: "Failed to Join Queue",
+        message: result.message,
+      });
     }
   };
 
   const handleCancelQueue = async () => {
+    setCancellingQueue(true);
     const result = await cancelQueue(leaveQueueRoom);
+    setCancellingQueue(false);
     if (result.success) {
-      alert(
-        `Queue canceled successfully. ${result.data.reorderedCount} queue(s) were reordered.`
-      );
+      setNotification({
+        open: true,
+        type: "success",
+        title: "Queue Cancelled",
+        message: `Queue canceled successfully.`,
+      });
       setCancelModalOpen(false);
     } else {
-      alert(result.message);
+      setNotification({
+        open: true,
+        type: "error",
+        title: "Failed to Cancel Queue",
+        message: result.message,
+      });
     }
   };
 
-  // Add this function inside the Services component
   const handleRefreshQueue = async () => {
     if (!userQueue) {
-      return; // Don't do anything if no active queue
+      return;
     }
 
     setRefreshLoading(true);
 
-    // Find the service from the services list that matches the userQueue
     const service = services.find((s) => s.name === userQueue.serviceName);
 
     if (service) {
@@ -87,18 +121,22 @@ export default function Services() {
         <p>Manage Your Healthcare Appointment and Queue Status</p>
       </div>
       <div className="mt-8 flex flex-col lg:flex-row gap-8">
-        <ServicesList
-          services={services}
-          loading={loading}
-          selectedService={selectedService}
-          onServiceClick={handleServiceClick}
-        />
-
-        <QueueCard
-          userQueue={userQueue}
-          onCancel={() => setCancelModalOpen(true)}
-          onRefresh={handleRefreshQueue}
-        />
+        <div className="flex flex-col flex-1">
+          <ServicesList
+            services={services}
+            loading={loading}
+            selectedService={selectedService}
+            onServiceClick={handleServiceClick}
+          />
+        </div>
+        <div className="flex flex-col items-stretch">
+          <QueueCard
+            userQueue={userQueue}
+            onCancel={() => setCancelModalOpen(true)}
+            onRefresh={handleRefreshQueue}
+          />
+          <ViewMedicalRecordsButton />
+        </div>
       </div>
       <QueueInfoModal
         isOpen={modalOpen}
@@ -107,19 +145,32 @@ export default function Services() {
         userQueue={userQueue}
         queueData={queueData}
         onJoinQueue={handleJoinQueue}
+        isJoining={joiningQueue} // Pass the loading state
       />
       <CancelQueueModal
         isOpen={cancelModalOpen}
         onClose={() => setCancelModalOpen(false)}
         onConfirm={handleCancelQueue}
         queueInfo={userQueue}
+        isCancelling={cancellingQueue} // Pass the loading state
       />
       <YourTurnModal
         isOpen={notificationModalOpen}
         onClose={() => setNotificationModalOpen(false)}
         userQueue={userQueue}
       />
-      <LoadingModal isOpen={refreshLoading} /> {/* Add this line */}
+      <LoadingModal
+        isOpen={openingServiceLoading}
+        message="Opening services please wait"
+      />
+      <LoadingModal isOpen={refreshLoading} message="Refreshing Queue" />
+      <NotificationModal
+        isOpen={notification.open}
+        onClose={() => setNotification((n) => ({ ...n, open: false }))}
+        type={notification.type}
+        title={notification.title}
+        message={notification.message}
+      />
     </section>
   );
 }

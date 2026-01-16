@@ -5,7 +5,7 @@ import {
   faHashtag,
   faCircleCheck,
   faCircleExclamation,
-  faClockRotateLeft,
+  faSpinner,
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function QueueInfoModal({
@@ -15,6 +15,7 @@ export default function QueueInfoModal({
   userQueue,
   queueData,
   onJoinQueue,
+  isJoining = false, // Add this prop
 }) {
   const isQueueFull =
     queueData.limit && queueData.queue.length >= queueData.limit;
@@ -138,19 +139,26 @@ export default function QueueInfoModal({
 
         {/* Action Button */}
         <button
-          className={`w-full py-3.5 rounded-xl font-semibold text-white  ${
-            canJoinQueue
+          className={`w-full py-3.5 rounded-xl font-semibold text-white transition-all ${
+            canJoinQueue && !isJoining
               ? "bg-blue-600 hover:bg-blue-700 hover:shadow-lg cursor-pointer"
               : "bg-gray-300 cursor-not-allowed"
           }`}
           onClick={onJoinQueue}
-          disabled={!canJoinQueue}
+          disabled={!canJoinQueue || isJoining}
         >
-          {hasActiveQueue
-            ? "Already in Queue"
-            : isQueueFull
-            ? "Queue Full"
-            : "Join Queue"}
+          {isJoining ? (
+            <span className="flex items-center justify-center gap-2">
+              <FontAwesomeIcon icon={faSpinner} className="animate-spin" />
+              Joining Queue...
+            </span>
+          ) : hasActiveQueue ? (
+            "Already in Queue"
+          ) : isQueueFull ? (
+            "Queue Full"
+          ) : (
+            "Join Queue"
+          )}
         </button>
       </div>
     </Modal>

@@ -1,9 +1,13 @@
-import React from "react";
 import Modal from "../ui/Modal";
 
-export default function LoadingModal({ isOpen }) {
+export default function LoadingModal({ isOpen, message = "Loading..." }) {
   return (
-    <Modal isOpen={isOpen} onClose={() => {}} size="default">
+    <Modal
+      isOpen={isOpen}
+      onClose={() => {}}
+      size="default"
+      hideCloseButton={true}
+    >
       <div className="flex flex-col items-center justify-center w-full">
         <svg
           className="animate-spin h-10 w-10 text-green-500 mb-4"
@@ -25,7 +29,7 @@ export default function LoadingModal({ isOpen }) {
             d="M4 12a8 8 0 018-8v8z"
           />
         </svg>
-        <span className="text-lg font-medium">Loading...</span>
+        <span className="text-lg font-medium">{message}</span>
       </div>
     </Modal>
   );
