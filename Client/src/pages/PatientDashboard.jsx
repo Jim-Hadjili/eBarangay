@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Header from "../sections/patientDashboard/Header";
+import Header from "../sections/patientDashboard/header";
 import Services from "../sections/patientDashboard/Services";
 import {
   getToken,
