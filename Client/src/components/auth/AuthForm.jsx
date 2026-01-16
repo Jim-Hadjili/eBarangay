@@ -19,7 +19,7 @@ export default function AuthForm({
             alt="eBarangay Logo"
             className="w-auto h-12 sm:h-14 md:h-16"
           />
-          <span className="text-sm sm:text-lg md:text-xl text-gray-800 font-Lexend">
+          <span className="text-base sm:text-lg md:text-xl text-gray-800 font-Lexend">
             eBarangay Healthcare
           </span>
         </div>

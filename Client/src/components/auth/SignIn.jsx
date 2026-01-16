@@ -61,7 +61,7 @@ export default function SignIn() {
             placeholder="Email address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base transition-all border border-gray-200 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
+            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-base sm:text-base transition-all border border-gray-200 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
             required
             disabled={loading}
           />
@@ -74,7 +74,7 @@ export default function SignIn() {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base transition-all border border-gray-200 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
+            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-base sm:text-base transition-all border border-gray-200 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
             required
             disabled={loading}
           />
@@ -117,7 +117,7 @@ export default function SignIn() {
         <div className="flex-1 border-t border-gray-300"></div>
       </div>
 
-      <p className="mt-3 sm:mt-4 text-xs sm:text-sm text-center text-gray-600">
+      <p className="mt-3 sm:mt-4 text-xs sm:text-base text-center text-gray-600">
         Don't have an account?{" "}
         <Link
           className="font-semibold text-green-600 cursor-pointer hover:underline"
