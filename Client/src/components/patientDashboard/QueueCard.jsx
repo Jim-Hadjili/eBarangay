@@ -136,12 +136,89 @@ export default function QueueCard({ userQueue, onCancel, onRefresh }) {
             </div>
           </>
         ) : (
-          <div className="text-center text-gray-500 py-12">
-            <p className="text-lg font-semibold mb-2">No Active Queue</p>
-            <p className="text-sm opacity-80">
-              Select a service to join the queue
-            </p>
-          </div>
+          <>
+            {/* Header with title and inactive badge */}
+            <div className="flex bg-white p-4 rounded-t-2xl justify-between items-center border-b border-gray-200">
+              <span className="text-gray-800 font-bold text-lg">
+                Current Queue
+              </span>
+              <span className="bg-gray-200 font-Lexend text-gray-600 text-xs px-3 py-1 rounded-full flex items-center gap-1.5">
+                <span className="w-2 h-2 bg-gray-500 rounded-full"></span>
+                Inactive
+              </span>
+            </div>
+
+            {/* Empty State Content */}
+            <div className="text-center py-8 px-6">
+              {/* Calendar Icon */}
+              <div className="flex justify-center mb-4">
+                <div className="bg-gray-100 rounded-2xl p-6">
+                  <svg
+                    className="w-16 h-16 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 12l2 2 4-4"
+                    />
+                  </svg>
+                </div>
+              </div>
+
+              {/* Title and Description */}
+              <h3 className="text-gray-900 font-bold text-lg mb-2">
+                No Active Queue
+              </h3>
+              <p className="text-gray-600 text-sm mb-6">
+                You're not currently in any queue. Select a{" "}
+                <span className="text-blue-600">healthcare service</span> to
+                join the queue.
+              </p>
+
+              {/* Quick Tip Section */}
+              <div className="bg-teal-50 rounded-xl p-4 text-left">
+                <div className="flex items-start gap-3">
+                  <div className="shrink-0 mt-0.5">
+                    <div className="w-6 h-6 bg-teal-400 rounded-full flex items-center justify-center">
+                      <svg
+                        className="w-4 h-4 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2.5}
+                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                  <div>
+                    <h4 className="text-gray-900 font-semibold text-sm mb-1">
+                      Quick Tip
+                    </h4>
+                    <p className="text-gray-700 text-xs leading-relaxed">
+                      Browse available services and join a queue to get
+                      real-time updates on your position and estimated wait
+                      time.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
         )}
       </div>
     </div>
