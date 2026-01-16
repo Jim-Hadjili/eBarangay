@@ -123,7 +123,7 @@ export default function QueueInfoModal({
                 className="text-purple-600 text-sm"
               />
               <span className="text-xs font-medium text-gray-600 uppercase tracking-wide">
-                Your Number Will be
+                Your Number
               </span>
             </div>
             <p className="text-2xl font-bold text-gray-900 font-mono">
