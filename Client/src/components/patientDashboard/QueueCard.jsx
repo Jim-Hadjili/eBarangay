@@ -95,7 +95,9 @@ export default function QueueCard({ userQueue, onCancel, onRefresh }) {
             <div className="flex gap-3 p-6">
               <button
                 onClick={onRefresh}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-3  bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition font-medium cursor-pointer"
+                disabled={!userQueue} // Disable if no active queue
+                className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gray-100 text-gray-700 rounded-lg transition font-medium cursor-pointer
+    ${!userQueue ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-200"}`}
               >
                 <svg
                   className="w-5 h-5"

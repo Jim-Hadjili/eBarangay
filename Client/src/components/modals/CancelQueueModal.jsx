@@ -113,14 +113,14 @@ export default function CancelQueueModal({
         <div className="flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition font-medium cursor-pointer"
+            className="flex-1 flex text-sm md:text-base items-center justify-center gap-2 px-4 py-3 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition font-medium cursor-pointer"
           >
             <FontAwesomeIcon icon={faCheck} className="mr-2" />
             Keep Queue
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition font-medium cursor-pointer"
+            className="flex-1 flex text-sm md:text-base items-center justify-center gap-2 px-4 py-3 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition font-medium cursor-pointer"
           >
             <FontAwesomeIcon icon={faXmark} className="mr-2" />
             Cancel Queue
