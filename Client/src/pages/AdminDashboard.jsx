@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/ui/Header";
-import Services from "../sections/patientDashboard/Services";
 import {
   getToken,
   isTokenValid,
   getUserFromToken,
   clearToken,
 } from "../utils/session";
+import ContentTabs from "../sections/adminDashboard/TabsButton";
 
-export default function PatientDashboard() {
+export default function AdminDashboard() {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
@@ -22,9 +22,10 @@ export default function PatientDashboard() {
     }
     const userData = getUserFromToken(token);
 
-    // Check if user is a patient (not admin)
-    if (userData?.userType === "Admin") {
-      navigate("/AdminDashboard");
+    // Check if user is actually an admin
+    if (userData?.userType !== "Admin") {
+      clearToken();
+      navigate("/SignIn");
       return;
     }
 
@@ -42,20 +43,14 @@ export default function PatientDashboard() {
     console.log("Edit profile clicked");
   };
 
-  const handleQueueHistory = () => {
-    // TODO: Implement queue history functionality
-    console.log("Queue history clicked");
-  };
-
   return (
     <>
       <Header
         user={user}
         onLogout={handleLogout}
         onEditProfile={handleEditProfile}
-        onQueueHistory={handleQueueHistory}
       />
-      <Services />
+      <ContentTabs />
     </>
   );
 }

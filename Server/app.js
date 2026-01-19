@@ -35,6 +35,8 @@ app.use(express.json());
 app.use("/api/auth", require("./routes/auth.routes"));
 app.use("/api/services", require("./routes/services.routes"));
 app.use("/api/queue", require("./routes/queue.routes"));
+app.use("/api/dashboard", require("./routes/dashboard.routes"));
+app.use("/api/activity", require("./routes/activity.routes"));
 
 // Socket.io connection handling
 io.on("connection", (socket) => {
@@ -50,6 +52,18 @@ io.on("connection", (socket) => {
   socket.on("leaveQueueRoom", (queueCode) => {
     socket.leave(queueCode);
     console.log(`User ${socket.id} left queue room: ${queueCode}`);
+  });
+
+  // Admin joins dashboard room for real-time updates
+  socket.on("joinDashboard", () => {
+    socket.join("dashboard");
+    console.log(`User ${socket.id} joined dashboard room`);
+  });
+
+  // Admin leaves dashboard room
+  socket.on("leaveDashboard", () => {
+    socket.leave("dashboard");
+    console.log(`User ${socket.id} left dashboard room`);
   });
 
   socket.on("disconnect", () => {

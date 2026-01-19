@@ -2,6 +2,8 @@ const Queue = require("../models/queueSchema");
 const Service = require("../models/serviceSchema");
 const User = require("../models/userSchema");
 const { notifyNextInQueue } = require("../utils/socketNotifications");
+const { emitDashboardUpdate } = require("./dashboard.controller");
+const ActivityLogger = require("../utils/activityLogger");
 
 exports.joinQueue = async (req, res) => {
   try {
@@ -10,6 +12,8 @@ exports.joinQueue = async (req, res) => {
 
     const service = await Service.findById(serviceId);
     if (!service) return res.status(404).json({ message: "Service not found" });
+
+    const patient = await User.findById(patientId);
 
     // Get today's date at midnight
     const today = new Date();
@@ -23,11 +27,8 @@ exports.joinQueue = async (req, res) => {
 
     if (existingQueue) {
       return res.status(400).json({
-        message: `You already have a queue today for ${existingQueue.service.name} (${existingQueue.queueCode})`,
-        existingQueue: {
-          queueCode: existingQueue.queueCode,
-          serviceName: existingQueue.service.name,
-        },
+        message: `You already have a queue today for ${existingQueue.service.name}`,
+        queueCode: existingQueue.queueCode,
       });
     }
 
@@ -55,6 +56,23 @@ exports.joinQueue = async (req, res) => {
       patient: patientId,
       date: today,
     });
+
+    // Log activity
+    await ActivityLogger.log({
+      activityType: "queue_joined",
+      description: `${patient.firstName} ${patient.lastName} joined ${service.name} queue`,
+      performedBy: patientId,
+      service: serviceId,
+      queue: queueEntry._id,
+      metadata: { queueCode, queueNumber },
+    });
+
+    // Emit dashboard update and activity update
+    const io = req.app.get("io");
+    if (io) {
+      emitDashboardUpdate(io);
+      io.to("dashboard").emit("activityUpdate");
+    }
 
     res.status(201).json({
       message: "Joined queue",
@@ -106,7 +124,6 @@ exports.getServiceQueue = async (req, res) => {
   }
 };
 
-// Add new endpoint to check user's current queue
 exports.getUserQueue = async (req, res) => {
   try {
     const patientId = req.user.id;
@@ -148,7 +165,6 @@ exports.getUserQueue = async (req, res) => {
   }
 };
 
-// Cancel queue and reorder
 exports.cancelQueue = async (req, res) => {
   try {
     const patientId = req.user.id;
@@ -161,7 +177,7 @@ exports.cancelQueue = async (req, res) => {
     const userQueue = await Queue.findOne({
       patient: patientId,
       date: today,
-    }).populate("service", "identifier");
+    }).populate("service", "identifier name");
 
     if (!userQueue) {
       return res.status(404).json({ message: "No active queue found" });
@@ -170,6 +186,9 @@ exports.cancelQueue = async (req, res) => {
     const canceledQueueNumber = userQueue.queueNumber;
     const serviceId = userQueue.service._id;
     const serviceIdentifier = userQueue.service.identifier;
+    const queueCode = userQueue.queueCode;
+
+    const patient = await User.findById(patientId);
 
     // Delete the user's queue
     await Queue.deleteOne({ _id: userQueue._id });
@@ -197,6 +216,22 @@ exports.cancelQueue = async (req, res) => {
       );
     }
 
+    // Log activity
+    await ActivityLogger.log({
+      activityType: "queue_cancelled",
+      description: `${patient.firstName} ${patient.lastName} cancelled queue ${queueCode} for ${userQueue.service.name}`,
+      performedBy: patientId,
+      service: serviceId,
+      metadata: { queueCode, canceledQueueNumber },
+    });
+
+    // Emit dashboard update and activity update
+    const io = req.app.get("io");
+    if (io) {
+      emitDashboardUpdate(io);
+      io.to("dashboard").emit("activityUpdate");
+    }
+
     res.json({
       message: "Queue canceled successfully",
       reorderedCount: higherQueues.length,
@@ -206,7 +241,6 @@ exports.cancelQueue = async (req, res) => {
   }
 };
 
-// Admin calls the next person in queue
 exports.callNextInQueue = async (req, res) => {
   try {
     const { serviceId } = req.body;
@@ -249,15 +283,14 @@ exports.callNextInQueue = async (req, res) => {
   }
 };
 
-// Mark queue as served and remove from queue
 exports.markAsServed = async (req, res) => {
   try {
     const { queueId } = req.params;
 
-    const queue = await Queue.findById(queueId).populate(
-      "service",
-      "identifier"
-    );
+    const queue = await Queue.findById(queueId)
+      .populate("service", "identifier name")
+      .populate("patient", "firstName lastName");
+
     if (!queue) {
       return res.status(404).json({ message: "Queue not found" });
     }
@@ -265,6 +298,7 @@ exports.markAsServed = async (req, res) => {
     const serviceId = queue.service._id;
     const serviceIdentifier = queue.service.identifier;
     const servedQueueNumber = queue.queueNumber;
+    const queueCode = queue.queueCode;
 
     // Get today's date at midnight
     const today = new Date();
@@ -281,19 +315,36 @@ exports.markAsServed = async (req, res) => {
     }).sort({ queueNumber: 1 });
 
     // Reorder queue numbers
-    for (const q of higherQueues) {
-      const newQueueNumber = q.queueNumber - 1;
+    for (const higherQueue of higherQueues) {
+      const newQueueNumber = higherQueue.queueNumber - 1;
       const newQueueCode = `${serviceIdentifier}-${String(
         newQueueNumber
       ).padStart(3, "0")}`;
 
       await Queue.updateOne(
-        { _id: q._id },
+        { _id: higherQueue._id },
         {
           queueNumber: newQueueNumber,
           queueCode: newQueueCode,
         }
       );
+    }
+
+    // Log activity
+    await ActivityLogger.log({
+      activityType: "queue_completed",
+      description: `Queue ${queueCode} completed for ${queue.patient.firstName} ${queue.patient.lastName} at ${queue.service.name}`,
+      performedBy: req.user.id,
+      targetUser: queue.patient._id,
+      service: serviceId,
+      metadata: { queueCode, servedQueueNumber },
+    });
+
+    // Emit dashboard update and activity update
+    const io = req.app.get("io");
+    if (io) {
+      emitDashboardUpdate(io);
+      io.to("dashboard").emit("activityUpdate");
     }
 
     res.json({

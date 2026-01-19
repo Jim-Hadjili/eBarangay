@@ -35,7 +35,13 @@ export default function SignIn() {
       setEmail("");
       setPassword("");
       localStorage.setItem("token", data.token);
-      navigate("/PatientDashboard");
+
+      // Navigate based on userType
+      if (data.userType === "Admin") {
+        navigate("/AdminDashboard");
+      } else {
+        navigate("/PatientDashboard");
+      }
     } catch (err) {
       setError(err.message);
     } finally {
