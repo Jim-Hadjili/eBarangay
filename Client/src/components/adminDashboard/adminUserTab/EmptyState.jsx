@@ -14,7 +14,7 @@ export default function EmptyState({ onAddClick }) {
       </p>
       <button
         onClick={onAddClick}
-        className="flex items-center justify-center gap-2 px-5 py-3 text-green-600 transition-all duration-200 bg-green-100 border-2 border-green-400 cursor-pointer group rounded-xl hover:shadow-lg hover:bg-green-200 font-Lexend whitespace-nowrap"
+        className="inline-flex items-center justify-center gap-2 px-5 py-3 text-green-600 transition-all duration-200 bg-green-100 border-2 border-green-400 cursor-pointer group rounded-xl hover:shadow-lg hover:bg-green-200 font-Lexend whitespace-nowrap"
       >
         <Plus
           size={20}
