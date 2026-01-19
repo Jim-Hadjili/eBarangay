@@ -15,8 +15,9 @@ export default function Header({
   const [isLogOutModalOpen, setIsLogOutModalOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Check if user is admin
-  const isAdmin = user?.userType === "Admin";
+  // Check if user is admin or super admin
+  const isAdmin =
+    user?.userType === "Admin" || user?.userType === "Super Admin";
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -160,7 +161,6 @@ export default function Header({
                       <span>Edit Profile</span>
                     </button>
 
-                    {/* Queue History - Only for Patients */}
                     {!isAdmin && (
                       <button
                         onClick={handleQueueHistoryClick}

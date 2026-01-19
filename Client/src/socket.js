@@ -1,8 +1,7 @@
-// App.js or QueuePage.js
 import { useEffect } from "react";
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:5000"); // backend URL
+const socket = io(import.meta.env.VITE_API_URL);
 
 function QueuePage({ queueId }) {
   useEffect(() => {

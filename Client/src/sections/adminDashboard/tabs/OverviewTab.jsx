@@ -40,7 +40,7 @@ export default function OverviewTab() {
   ];
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-white">
       <div className="w-full px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-10 lg:px-16 lg:py-12 xl:px-20">
         {/* Page Header */}
         <div className="mb-6 sm:mb-8">
@@ -88,7 +88,7 @@ export default function OverviewTab() {
         {/* Recent Activity Section */}
         <div className="overflow-hidden bg-white border border-gray-200 shadow-sm rounded-xl">
           {/* Section Header */}
-          <div className="px-5 py-4 border-b border-gray-200 sm:px-6 sm:py-5 bg-linear-to-r from-gray-50 to-white">
+          <div className="px-5 py-4 bg-gray-100 border-b border-gray-600 sm:px-6 sm:py-5">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-lg font-bold text-gray-900 sm:text-xl font-Lexend">
@@ -98,12 +98,6 @@ export default function OverviewTab() {
                   Latest system activities and updates
                 </p>
               </div>
-              {!activitiesLoading && activities.length > 0 && (
-                <span className="items-center hidden px-3 py-1 text-xs font-semibold text-green-800 bg-green-100 rounded-full sm:inline-flex">
-                  {activities.length}{" "}
-                  {activities.length === 1 ? "Activity" : "Activities"}
-                </span>
-              )}
             </div>
           </div>
 

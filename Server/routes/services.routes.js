@@ -3,6 +3,7 @@ const {
   getAllServices,
   createService,
   updateService,
+  deleteService,
 } = require("../controllers/services.controller");
 
 // Get all services (frontend)
@@ -13,5 +14,8 @@ router.post("/", createService);
 
 // Edit a service (admin)
 router.put("/:id", updateService);
+
+// Delete a service (admin)
+router.delete("/:id", deleteService);
 
 module.exports = router;

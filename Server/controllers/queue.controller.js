@@ -38,8 +38,8 @@ exports.joinQueue = async (req, res) => {
       date: today,
     });
 
-    if (count >= service.queueLimit) {
-      return res.status(400).json({ message: "Queue limit reached for today" });
+    if (service.queueLimit !== null && count >= service.queueLimit) {
+      return res.status(400).json({ message: "Queue is full for today" });
     }
 
     const queueNumber = count + 1;
@@ -115,7 +115,7 @@ exports.getServiceQueue = async (req, res) => {
           ? `${entry.patient.firstName} ${entry.patient.lastName}`
           : "Patient",
       })),
-      nextNumber: nextNumber > limit ? null : nextNumber,
+      nextNumber: limit !== null && nextNumber > limit ? null : nextNumber,
       limit,
       identifier: service.identifier,
     });

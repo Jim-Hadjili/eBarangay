@@ -91,7 +91,7 @@ export default function ActivityItem({ activity }) {
     <div className="flex items-start gap-3 px-3 py-3 transition-all duration-200 border-b rounded-lg group sm:gap-4 sm:py-4 sm:px-4 last:border-b-0 hover:bg-gray-50">
       {/* Icon Container */}
       <div
-        className={`flex-shrink-0 p-2 sm:p-2.5 rounded-lg ${activityConfig.bg} border ${activityConfig.borderColor} group-hover:scale-110 transition-transform duration-200`}
+        className={`shrink-0 p-2 sm:p-2.5 rounded-lg ${activityConfig.bg} border ${activityConfig.borderColor} group-hover:scale-110 transition-transform duration-200`}
       >
         <Icon
           className={`${activityConfig.color} w-4 h-4 sm:w-5 sm:h-5`}

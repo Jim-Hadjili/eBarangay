@@ -20,6 +20,18 @@ exports.getAllServices = async (req, res) => {
           date: today,
         });
 
+        // Determine status based on service.status and queue limit
+        let displayStatus = service.status || "available";
+        if (service.status === "available") {
+          if (service.queueLimit !== null && queueCount >= service.queueLimit) {
+            displayStatus = "full";
+          } else {
+            displayStatus = "active";
+          }
+        } else {
+          displayStatus = "unavailable";
+        }
+
         return {
           _id: service._id,
           id: service.identifier,
@@ -28,10 +40,8 @@ exports.getAllServices = async (req, res) => {
           identifier: service.identifier,
           queueLimit: service.queueLimit,
           queue: queueCount,
-          status:
-            queueCount >= service.queueLimit && service.queueLimit
-              ? "full"
-              : "active",
+          status: displayStatus,
+          serviceStatus: service.status || "available", // Add the actual service status
         };
       })
     );
@@ -45,17 +55,23 @@ exports.getAllServices = async (req, res) => {
 // Create a new service (admin only)
 exports.createService = async (req, res) => {
   try {
-    const { id, name, description } = req.body;
-    if (!id || !name || !description)
+    const { identifier, name, description, queueLimit, status } = req.body;
+    if (!identifier || !name || !description)
       return res.status(400).json({ message: "All fields are required" });
 
-    const exists = await Service.findOne({ id });
+    const exists = await Service.findOne({ identifier });
     if (exists)
       return res
         .status(409)
-        .json({ message: "Service with this ID already exists" });
+        .json({ message: "Service with this identifier already exists" });
 
-    const service = await Service.create({ id, name, description });
+    const service = await Service.create({
+      identifier,
+      name,
+      description,
+      queueLimit,
+      status: status || "available",
+    });
 
     // Log activity
     await ActivityLogger.log({
@@ -82,12 +98,26 @@ exports.createService = async (req, res) => {
 exports.updateService = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, description } = req.body;
+    const { identifier, name, description, queueLimit, status } = req.body;
+
+    const updateData = { name, description };
+    if (queueLimit !== undefined) {
+      updateData.queueLimit = queueLimit;
+    }
+    if (status !== undefined) {
+      updateData.status = status;
+    }
+    if (identifier !== undefined) {
+      updateData.identifier = identifier;
+    }
+
+    // Find by old identifier, update with new identifier (and other fields)
     const service = await Service.findOneAndUpdate(
-      { id },
-      { name, description },
+      { identifier: id },
+      updateData,
       { new: true }
     );
+
     if (!service) return res.status(404).json({ message: "Service not found" });
 
     // Log activity
@@ -106,6 +136,51 @@ exports.updateService = async (req, res) => {
     }
 
     res.json({ message: "Service updated", service });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+// Delete a service (admin only)
+exports.deleteService = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const service = await Service.findOne({ identifier: id });
+    if (!service) return res.status(404).json({ message: "Service not found" });
+
+    // Check if there are any active queues for this service
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const activeQueues = await Queue.countDocuments({
+      service: service._id,
+      date: today,
+      status: { $in: ["waiting", "serving"] },
+    });
+
+    if (activeQueues > 0) {
+      return res.status(400).json({
+        message: "Cannot delete service with active queues",
+      });
+    }
+
+    await Service.findByIdAndDelete(service._id);
+
+    // Log activity
+    await ActivityLogger.log({
+      activityType: "service_deleted",
+      description: `Service deleted: ${service.name}`,
+      performedBy: req.user?.id || null,
+    });
+
+    // Emit dashboard update and activity update
+    const io = req.app.get("io");
+    if (io) {
+      emitDashboardUpdate(io);
+      io.to("dashboard").emit("activityUpdate");
+    }
+
+    res.json({ message: "Service deleted successfully" });
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
   }

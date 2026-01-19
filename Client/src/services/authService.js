@@ -11,6 +11,10 @@ export const register = async (formData) => {
         lastName: formData.lastName,
         email: formData.email,
         password: formData.password,
+        phone: formData.phone || null,
+        dateOfBirth: formData.dateOfBirth || null,
+        gender: formData.gender || null,
+        address: formData.address || null,
       }),
     }
   );

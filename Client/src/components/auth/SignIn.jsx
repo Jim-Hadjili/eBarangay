@@ -37,7 +37,7 @@ export default function SignIn() {
       localStorage.setItem("token", data.token);
 
       // Navigate based on userType
-      if (data.userType === "Admin") {
+      if (data.userType === "Admin" || data.userType === "Super Admin") {
         navigate("/AdminDashboard");
       } else {
         navigate("/PatientDashboard");
@@ -62,12 +62,19 @@ export default function SignIn() {
       >
         {/* Email Input */}
         <div>
+          <label
+            htmlFor="email"
+            className="block mb-1 text-xs font-medium text-gray-700"
+          >
+            Email Address<span className="text-red-500">*</span>
+          </label>
           <input
+            id="email"
             type="email"
             placeholder="Email address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-base sm:text-base transition-all border border-gray-200 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
+            className="w-full px-2.5 py-2.5 text-base transition-all border border-gray-200 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
             required
             disabled={loading}
           />
@@ -75,29 +82,35 @@ export default function SignIn() {
 
         {/* Password Input */}
         <div className="relative">
+          <label
+            htmlFor="password"
+            className="block mb-1 text-xs font-medium text-gray-700"
+          >
+            Password<span className="text-red-500">*</span>
+          </label>
           <input
+            id="password"
             type={showPassword ? "text" : "password"}
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-base sm:text-base transition-all border border-gray-200 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
+            className="w-full px-2.5 py-2.5 pr-8 text-base transition-all border border-gray-200 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
             required
             disabled={loading}
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute text-gray-400 -translate-y-1/2 right-3 sm:right-4 top-1/2 hover:text-gray-600"
+            className="absolute text-gray-400 -translate-y-1/2 right-2 top-[calc(50%+9px)] hover:text-gray-600"
             disabled={loading}
           >
-            {/* ...SVG ICON... */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="w-4 h-4 sm:w-5 sm:h-5"
+              className="w-4 h-4"
             >
               {showPassword ? (
                 <path
@@ -118,12 +131,12 @@ export default function SignIn() {
       </AuthForm>
 
       {/* Divider */}
-      <div className="flex items-center my-4 sm:my-6">
+      <div className="flex items-center my-2">
         <div className="flex-1 border-t border-gray-300"></div>
         <div className="flex-1 border-t border-gray-300"></div>
       </div>
 
-      <p className="mt-3 sm:mt-4 text-xs sm:text-base text-center text-gray-600">
+      <p className="mt-2 text-xs text-center text-gray-600">
         Don't have an account?{" "}
         <Link
           className="font-semibold text-green-600 cursor-pointer hover:underline"

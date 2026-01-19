@@ -54,19 +54,32 @@ exports.login = async (req, res) => {
 
 exports.register = async (req, res) => {
   try {
-    const { firstName, lastName, email, password } = req.body;
+    const {
+      firstName,
+      lastName,
+      email,
+      password,
+      phone,
+      dateOfBirth,
+      gender,
+      address,
+    } = req.body;
 
     if (!firstName || !lastName || !email || !password)
-      return res.status(400).json({ message: "All fields are required" });
+      return res.status(400).json({ message: "Required fields are missing" });
 
     const exists = await User.findOne({ email });
-    if (exists) return res.status(409).json({ message: "User already exists" });
+    if (exists) return res.status(400).json({ message: "User already exists" });
 
     const user = await User.create({
       firstName,
       lastName,
       email,
       password,
+      phone: phone || null,
+      dateOfBirth: dateOfBirth || null,
+      gender: gender || null,
+      address: address || null,
       userType: "Patient",
     });
 
@@ -80,7 +93,7 @@ exports.register = async (req, res) => {
     // Emit dashboard update and activity update
     const io = req.app.get("io");
     if (io) {
-      emitDashboardUpdate(io);
+      await emitDashboardUpdate(io);
       io.to("dashboard").emit("activityUpdate");
     }
 
@@ -98,11 +111,23 @@ exports.register = async (req, res) => {
 
 exports.addAdmin = async (req, res) => {
   try {
-    const { firstName, lastName, email, password, userType } = req.body;
+    const {
+      firstName,
+      lastName,
+      email,
+      password,
+      phone,
+      dateOfBirth,
+      gender,
+      address,
+      userType,
+    } = req.body;
     const performedById = req.user.id;
 
     if (!firstName || !lastName || !email || !password || !userType)
-      return res.status(400).json({ message: "All fields are required" });
+      return res
+        .status(400)
+        .json({ message: "All required fields must be filled" });
 
     if (!["Admin", "Staff"].includes(userType))
       return res.status(400).json({ message: "Invalid user type" });
@@ -115,6 +140,10 @@ exports.addAdmin = async (req, res) => {
       lastName,
       email,
       password,
+      phone: phone || null,
+      dateOfBirth: dateOfBirth || null,
+      gender: gender || null,
+      address: address || null,
       userType,
     });
 
@@ -144,6 +173,118 @@ exports.addAdmin = async (req, res) => {
     });
   } catch (err) {
     console.error("Add admin error:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+exports.deleteAdmin = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const performedById = req.user.id;
+
+    // Check if the user performing the action is Super Admin
+    const performedBy = await User.findById(performedById);
+    if (performedBy.userType !== "Super Admin") {
+      return res
+        .status(403)
+        .json({ message: "Only Super Admin can delete users" });
+    }
+
+    // Find the user to delete
+    const userToDelete = await User.findById(userId);
+    if (!userToDelete) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Prevent deleting yourself
+    if (userId === performedById) {
+      return res.status(400).json({ message: "You cannot delete yourself" });
+    }
+
+    // Delete the user
+    await User.findByIdAndDelete(userId);
+
+    // Log activity
+    await ActivityLogger.log({
+      activityType: "admin_deleted",
+      description: `${userToDelete.userType} deleted: ${userToDelete.firstName} ${userToDelete.lastName} by ${performedBy.firstName} ${performedBy.lastName}`,
+      performedBy: performedById,
+      targetUser: userId,
+      metadata: { deletedUserType: userToDelete.userType },
+    });
+
+    // Emit dashboard update and activity update
+    const io = req.app.get("io");
+    if (io) {
+      emitDashboardUpdate(io);
+      io.to("dashboard").emit("activityUpdate");
+    }
+
+    res.json({
+      message: `${userToDelete.userType} deleted successfully`,
+      deletedUser: {
+        id: userToDelete._id,
+        name: `${userToDelete.firstName} ${userToDelete.lastName}`,
+      },
+    });
+  } catch (err) {
+    console.error("Delete admin error:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+exports.deletePatient = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const performedById = req.user.id;
+
+    // Check if the user performing the action is Admin or Super Admin
+    const performedBy = await User.findById(performedById);
+    if (!["Admin", "Super Admin"].includes(performedBy.userType)) {
+      return res
+        .status(403)
+        .json({ message: "Only Admin users can delete patients" });
+    }
+
+    // Find the patient to delete
+    const patientToDelete = await User.findById(userId);
+    if (!patientToDelete) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    // Ensure the user to delete is a patient
+    if (patientToDelete.userType !== "Patient") {
+      return res.status(400).json({ message: "User is not a patient" });
+    }
+
+    // Delete the patient
+    await User.findByIdAndDelete(userId);
+
+    // Log activity
+    await ActivityLogger.log({
+      activityType: "patient_deleted",
+      description: `Patient deleted: ${patientToDelete.firstName} ${patientToDelete.lastName} by ${performedBy.firstName} ${performedBy.lastName}`,
+      performedBy: performedById,
+      targetUser: userId,
+      metadata: { deletedUserType: patientToDelete.userType },
+    });
+
+    // Emit dashboard update and activity update
+    const io = req.app.get("io");
+    if (io) {
+      emitDashboardUpdate(io);
+      io.to("dashboard").emit("activityUpdate");
+    }
+
+    res.json({
+      message: "Patient deleted successfully",
+      deletedUser: {
+        id: patientToDelete._id,
+        name: `${patientToDelete.firstName} ${patientToDelete.lastName}`,
+      },
+    });
+  } catch (err) {
+    console.error("Delete patient error:", err);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };

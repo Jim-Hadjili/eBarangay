@@ -23,7 +23,10 @@ export default function AdminDashboard() {
     const userData = getUserFromToken(token);
 
     // Check if user is actually an admin
-    if (userData?.userType !== "Admin") {
+    if (
+      userData?.userType !== "Admin" &&
+      userData?.userType !== "Super Admin"
+    ) {
       clearToken();
       navigate("/SignIn");
       return;

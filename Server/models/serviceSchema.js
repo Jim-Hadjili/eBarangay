@@ -6,6 +6,11 @@ const serviceSchema = new mongoose.Schema(
     description: { type: String, required: true },
     identifier: { type: String, required: true },
     queueLimit: { type: Number, default: null },
+    status: {
+      type: String,
+      enum: ["available", "unavailable"],
+      default: "available",
+    },
   },
   { timestamps: true }
 );

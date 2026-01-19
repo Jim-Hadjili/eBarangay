@@ -13,6 +13,9 @@ export default function AuthLayout() {
     image = "/images/SignInPage.png";
   }
 
+  // Check if current page is sign-up
+  const isSignUpPage = location.pathname === "/";
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -40,7 +43,11 @@ export default function AuthLayout() {
         </div>
       </div>
       <div className="flex items-center justify-center w-full p-4 sm:p-6 md:p-8 lg:w-1/2 lg:h-full lg:p-4">
-        <div className="w-full max-w-md p-4 sm:p-6 md:p-8 bg-white border border-gray-300 shadow-2xl rounded-3xl">
+        <div
+          className={`w-full ${
+            isSignUpPage ? "max-w-lg" : "max-w-md"
+          } p-4 bg-white border border-gray-300 shadow-2xl sm:p-6 md:p-8 rounded-3xl`}
+        >
           <Outlet />
         </div>
       </div>

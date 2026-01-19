@@ -1,16 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { io } from "socket.io-client";
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:5000";
+const SOCKET_URL = import.meta.env.VITE_API_URL.replace(/\/api$/, "");
 
 export const useServices = () => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchServices = async () => {
+  const fetchServices = useCallback(async () => {
     try {
-      setLoading(true);
       const response = await fetch(`${import.meta.env.VITE_API_URL}/services`);
 
       if (!response.ok) {
@@ -20,14 +19,14 @@ export const useServices = () => {
       const data = await response.json();
       setServices(data.services || []);
       setError(null);
+      setLoading(false);
     } catch (err) {
       setError(err.message);
       console.error("Error fetching services:", err);
       setServices([]);
-    } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     // Initial fetch
@@ -39,22 +38,25 @@ export const useServices = () => {
     // Join dashboard room to receive updates
     socket.emit("joinDashboard");
 
-    // Listen for dashboard updates (which occur when queue changes)
-    socket.on("dashboardUpdate", () => {
+    // Single consolidated handler for any service updates
+    const handleServiceUpdate = () => {
       fetchServices();
-    });
+    };
+
+    // Listen for dashboard updates (which occur when queue changes)
+    socket.on("dashboardUpdate", handleServiceUpdate);
 
     // Listen for activity updates (service created/updated)
-    socket.on("activityUpdate", () => {
-      fetchServices();
-    });
+    socket.on("activityUpdate", handleServiceUpdate);
 
     // Cleanup
     return () => {
+      socket.off("dashboardUpdate", handleServiceUpdate);
+      socket.off("activityUpdate", handleServiceUpdate);
       socket.emit("leaveDashboard");
       socket.disconnect();
     };
-  }, []);
+  }, [fetchServices]);
 
-  return { services, loading, error, refetch: fetchServices };
+  return { services, loading, error };
 };
