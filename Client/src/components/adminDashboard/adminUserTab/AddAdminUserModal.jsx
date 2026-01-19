@@ -102,7 +102,7 @@ export default function AddAdminUserModal({ isOpen, onClose, onSuccess }) {
                   htmlFor="dateOfBirth"
                   className="text-xs font-semibold text-gray-700 sm:text-sm font-Lexend"
                 >
-                  Date of Birth (Optional)
+                  Date of Birth <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="date"
@@ -112,6 +112,7 @@ export default function AddAdminUserModal({ isOpen, onClose, onSuccess }) {
                   onChange={handleChange}
                   className="px-3 py-2 text-sm text-gray-900 border border-gray-300 rounded-lg sm:px-4 sm:py-3 font-Lexend focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   disabled={loading}
+                  required
                 />
               </div>
             </div>
@@ -146,7 +147,7 @@ export default function AddAdminUserModal({ isOpen, onClose, onSuccess }) {
                   htmlFor="phone"
                   className="text-xs font-semibold text-gray-700 sm:text-sm font-Lexend"
                 >
-                  Phone Number (Optional)
+                  Phone Number <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="tel"
@@ -157,6 +158,7 @@ export default function AddAdminUserModal({ isOpen, onClose, onSuccess }) {
                   placeholder="e.g., 0912-345-6789"
                   className="px-3 py-2 text-sm text-gray-900 border border-gray-300 rounded-lg sm:px-4 sm:py-3 font-Lexend focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   disabled={loading}
+                  required
                   autoComplete="off"
                 />
               </div>
@@ -167,7 +169,7 @@ export default function AddAdminUserModal({ isOpen, onClose, onSuccess }) {
                   htmlFor="gender"
                   className="text-xs font-semibold text-gray-700 sm:text-sm font-Lexend"
                 >
-                  Gender (Optional)
+                  Gender <span className="text-red-500">*</span>
                 </label>
                 <select
                   id="gender"
@@ -176,6 +178,7 @@ export default function AddAdminUserModal({ isOpen, onClose, onSuccess }) {
                   onChange={handleChange}
                   className="px-3 py-2 text-sm text-gray-900 border border-gray-300 rounded-lg sm:px-4 sm:py-3 font-Lexend focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   disabled={loading}
+                  required
                 >
                   <option value="">Select gender</option>
                   <option value="Male">Male</option>
@@ -189,7 +192,7 @@ export default function AddAdminUserModal({ isOpen, onClose, onSuccess }) {
                   htmlFor="address"
                   className="text-xs font-semibold text-gray-700 sm:text-sm font-Lexend"
                 >
-                  Address (Optional)
+                  Address <span className="text-red-500">*</span>
                 </label>
                 <textarea
                   id="address"
@@ -200,6 +203,7 @@ export default function AddAdminUserModal({ isOpen, onClose, onSuccess }) {
                   rows={3}
                   className="px-3 py-2 text-sm text-gray-900 border border-gray-300 rounded-lg resize-none sm:px-4 sm:py-3 font-Lexend focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   disabled={loading}
+                  required
                   autoComplete="off"
                 />
               </div>
