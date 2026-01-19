@@ -103,7 +103,7 @@ export default function AddServiceModal({ isOpen, onClose, onSuccess }) {
               htmlFor="queueLimit"
               className="text-xs font-semibold text-gray-700 sm:text-sm font-Lexend"
             >
-              Queue Limit (Optional)
+              Queue Limit <span className="text-red-500">*</span>
             </label>
             <input
               type="number"
@@ -111,8 +111,9 @@ export default function AddServiceModal({ isOpen, onClose, onSuccess }) {
               name="queueLimit"
               value={formData.queueLimit}
               onChange={handleChange}
-              placeholder="Leave empty for unlimited"
-              min="1"
+              placeholder="Minimum 20"
+              min="20"
+              required
               className="px-3 py-2 text-sm text-gray-900 border border-gray-300 rounded-lg sm:px-4 sm:py-3 font-Lexend focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
               disabled={loading}
             />

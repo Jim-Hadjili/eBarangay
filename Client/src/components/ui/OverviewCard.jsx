@@ -8,7 +8,7 @@ export default function OverviewCard({
   return (
     <div className="relative overflow-hidden transition-all duration-300 ease-in-out bg-white border border-gray-200 shadow-sm group rounded-xl hover:shadow-lg hover:border-gray-300">
       {/* Decorative gradient accent */}
-      <div className="absolute top-0 left-0 w-full h-1 transition-opacity duration-300 opacity-0 bg-gradient-to-r from-green-400 to-green-600 group-hover:opacity-100" />
+      <div className="absolute top-0 left-0 w-full h-1 transition-opacity duration-300 opacity-0 bg-linear-to-r from-green-400 to-green-600 group-hover:opacity-100" />
 
       <div className="p-5 sm:p-6">
         {/* Header with title and icon */}
@@ -17,7 +17,7 @@ export default function OverviewCard({
             {title}
           </h3>
           {Icon && (
-            <div className="flex items-center justify-center w-10 h-10 text-green-600 transition-colors duration-300 rounded-lg sm:w-12 sm:h-12 bg-gradient-to-br from-green-50 to-green-100 group-hover:from-green-100 group-hover:to-green-200">
+            <div className="flex items-center justify-center w-10 h-10 text-green-600 transition-colors duration-300 rounded-lg sm:w-12 sm:h-12 bg-linear-to-br from-green-50 to-green-100 group-hover:from-green-100 group-hover:to-green-200">
               <Icon className="w-5 h-5 sm:w-6 sm:h-6" strokeWidth={2} />
             </div>
           )}
@@ -37,7 +37,7 @@ export default function OverviewCard({
       </div>
 
       {/* Subtle hover effect background */}
-      <div className="absolute inset-0 transition-opacity duration-300 opacity-0 pointer-events-none bg-gradient-to-br from-transparent to-gray-50 group-hover:opacity-30" />
+      <div className="absolute inset-0 transition-opacity duration-300 opacity-0 pointer-events-none bg-linear-to-br from-transparent to-gray-50 group-hover:opacity-30" />
     </div>
   );
 }
