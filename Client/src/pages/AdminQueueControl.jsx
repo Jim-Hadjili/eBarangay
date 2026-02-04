@@ -176,10 +176,10 @@ export default function AdminQueueControl() {
         onBack={handleBack}
       />
 
-      <div className="px-4 py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">
-        <div className="grid gap-6 lg:grid-cols-2">
+      <div className="px-4 py-4 mx-auto max-w-7xl sm:px-6 sm:py-6 lg:px-8">
+        <div className="grid gap-4 sm:gap-6 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2">
           {/* Left Side - Queue Control */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             <NowServingCard
               currentQueue={currentQueue}
               patient={patient}

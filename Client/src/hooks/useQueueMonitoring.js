@@ -26,7 +26,7 @@ export const useQueueMonitoring = () => {
       }
 
       const data = await response.json();
-      console.log("Active queues fetched:", data);
+      console.log("Active queues fetched:");
       setServices(data.services || []);
       setError(null);
       setLoading(false);

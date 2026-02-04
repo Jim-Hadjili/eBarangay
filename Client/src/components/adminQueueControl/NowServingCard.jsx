@@ -80,38 +80,38 @@ export default function NowServingCard({
   };
 
   return (
-    <div className="overflow-hidden bg-white border border-gray-200 rounded-xl shadow-sm">
-      <div className="px-6 py-4 bg-blue-200 border-b border-gray-200">
-        <h2 className="text-lg font-bold text-gray-900 font-Lexend">
+    <div className="overflow-hidden bg-white border border-gray-200 rounded-lg sm:rounded-xl shadow-sm">
+      <div className="px-4 py-3 sm:px-6 sm:py-4 bg-blue-200 border-b border-gray-200">
+        <h2 className="text-base sm:text-lg font-bold text-gray-900 font-Lexend">
           NOW SERVING
         </h2>
       </div>
 
       {currentQueue ? (
-        <div className="p-6">
-          <div className="mb-6">
-            <div className="text-5xl font-bold text-center text-orange-500 font-Lexend">
+        <div className="p-4 sm:p-6">
+          <div className="mb-4 sm:mb-6">
+            <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-center text-orange-500 font-Lexend">
               {currentQueue.queueCode}
             </div>
-            <div className="flex items-center justify-center gap-2 mt-3">
-              <User className="w-5 h-5 text-gray-400" />
-              <p className="text-lg font-medium text-gray-900 font-Lexend">
+            <div className="flex items-center justify-center gap-2 mt-2 sm:mt-3 flex-wrap">
+              <User className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
+              <p className="text-base sm:text-lg font-medium text-gray-900 font-Lexend text-center">
                 {patient?.firstName} {patient?.lastName}
               </p>
             </div>
 
             {/* Priority Badge */}
             {patient?.priorityStatus && patient.priorityStatus !== "None" && (
-              <div className="flex justify-center mt-3">
+              <div className="flex justify-center mt-2 sm:mt-3">
                 {getPriorityBadge(patient.priorityStatus)}
               </div>
             )}
 
             {/* Call Status */}
             {callCount > 0 && (
-              <div className="flex items-center justify-center gap-2 mt-3 text-sm">
-                <Volume2 className="w-4 h-4 text-green-600" />
-                <span className="text-gray-600 font-Lexend">
+              <div className="flex items-center justify-center gap-2 mt-2 sm:mt-3 text-xs sm:text-sm">
+                <Volume2 className="w-3 h-3 sm:w-4 sm:h-4 text-green-600" />
+                <span className="text-gray-600 font-Lexend text-center">
                   Called {callCount} {callCount === 1 ? "time" : "times"}
                   {lastCallTime && (
                     <span className="text-gray-400 ml-1">
@@ -123,7 +123,7 @@ export default function NowServingCard({
             )}
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
             <button
               onClick={handleCallClick}
               disabled={isCallCooldown}
@@ -157,19 +157,21 @@ export default function NowServingCard({
           </div>
         </div>
       ) : (
-        <div className="p-12 text-center">
-          <Users className="w-16 h-16 mx-auto mb-3 text-gray-300" />
-          <p className="text-gray-500 font-Lexend mb-6">No patients waiting</p>
+        <div className="p-8 sm:p-12 text-center">
+          <Users className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 text-gray-300" />
+          <p className="text-sm sm:text-base text-gray-500 font-Lexend mb-4 sm:mb-6">
+            No patients waiting
+          </p>
           <button
             onClick={handleCallClick}
             disabled={isCallCooldown}
-            className={`flex items-center justify-center gap-2 px-6 py-3 mx-auto text-white transition-all rounded-lg font-Lexend font-medium ${
+            className={`flex items-center justify-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 mx-auto text-sm sm:text-base text-white transition-all rounded-lg font-Lexend font-medium ${
               isCallCooldown
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-green-600 hover:bg-green-700 cursor-pointer"
             }`}
           >
-            <Phone className="w-5 h-5" />
+            <Phone className="w-4 h-4 sm:w-5 sm:h-5" />
             {isCallCooldown ? (
               <span>Wait {cooldownTime}s</span>
             ) : (

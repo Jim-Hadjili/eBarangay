@@ -62,15 +62,6 @@ export default function QueueMonitoringTab() {
   const activeServices = services.filter((s) => s.waitingCount > 0);
   const hasActiveQueues = activeServices.length > 0;
 
-  console.log("QueueMonitoringTab Debug:", {
-    servicesCount: services.length,
-    activeServicesCount: activeServices.length,
-    services: services.map((s) => ({
-      name: s.name,
-      waitingCount: s.waitingCount,
-    })),
-  });
-
   return (
     <div className="min-h-screen bg-white">
       <div className="w-full px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-10 lg:px-16 lg:py-12 xl:px-20">

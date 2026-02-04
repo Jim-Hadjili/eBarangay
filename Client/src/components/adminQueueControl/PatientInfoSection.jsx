@@ -28,11 +28,13 @@ export default function PatientInfoSection({ patient }) {
 
 function InfoRow({ label, value }) {
   return (
-    <div className="flex justify-between py-2 border-b border-gray-100">
-      <span className="text-sm font-medium text-gray-600 font-Lexend">
+    <div className="flex flex-col sm:flex-row sm:justify-between py-2 border-b border-gray-100 gap-1 sm:gap-2">
+      <span className="text-xs sm:text-sm font-medium text-gray-600 font-Lexend">
         {label}
       </span>
-      <span className="text-sm text-gray-900 font-Lexend">{value}</span>
+      <span className="text-xs sm:text-sm text-gray-900 font-Lexend break-words">
+        {value}
+      </span>
     </div>
   );
 }
