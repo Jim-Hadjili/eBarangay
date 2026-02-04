@@ -1,7 +1,9 @@
 import { useEffect } from "react";
 import { io } from "socket.io-client";
 
-const socket = io(import.meta.env.VITE_API_URL);
+// Remove '/api' from the URL for socket connection
+const socketURL = import.meta.env.VITE_API_URL.replace("/api", "");
+const socket = io(socketURL);
 
 function QueuePage({ queueId }) {
   useEffect(() => {
