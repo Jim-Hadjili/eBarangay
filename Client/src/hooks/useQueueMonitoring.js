@@ -26,6 +26,7 @@ export const useQueueMonitoring = () => {
       }
 
       const data = await response.json();
+      console.log("Active queues fetched:", data);
       setServices(data.services || []);
       setError(null);
       setLoading(false);
@@ -49,6 +50,7 @@ export const useQueueMonitoring = () => {
 
     // Listen for queue updates
     const handleQueueUpdate = () => {
+      console.log("Queue update received, refetching...");
       fetchActiveQueues();
     };
 
