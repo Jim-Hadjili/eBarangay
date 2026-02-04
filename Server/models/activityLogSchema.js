@@ -9,13 +9,22 @@ const activityLogSchema = new mongoose.Schema(
         "patient_registered",
         "admin_added",
         "staff_added",
+        "admin_deleted",
+        "patient_deleted",
         "queue_joined",
         "queue_completed",
         "queue_cancelled",
         "service_created",
         "service_updated",
         "service_disabled",
+        "service_deleted",
         "user_login",
+        "user_logout",
+        "monitoring_started",
+        "monitoring_stopped",
+        "medical_record_created",
+        "medical_record_updated",
+        "profile_updated",
       ],
     },
     description: {
@@ -47,7 +56,7 @@ const activityLogSchema = new mongoose.Schema(
       default: {},
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 // Index for faster queries

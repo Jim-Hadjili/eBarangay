@@ -13,8 +13,10 @@ export default function CancelQueueModal({
   onClose,
   onConfirm,
   queueInfo,
-  isCancelling = false, // Add this prop
+  isCancelling = false,
 }) {
+  const isOnRecallList = queueInfo?.status === "skipped";
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="default">
       <div className="w-full">
@@ -27,7 +29,7 @@ export default function CancelQueueModal({
             />
           </div>
           <h3 className="text-2xl font-bold text-gray-900">
-            Cancel Your Queue?
+            {isOnRecallList ? "Cancel Recall Queue?" : "Cancel Your Queue?"}
           </h3>
           <p className="text-sm text-gray-500 mt-1">
             This action requires confirmation
@@ -37,7 +39,9 @@ export default function CancelQueueModal({
         {/* Queue Information Card */}
         <div className="bg-linear-to-br from-gray-50 to-gray-100 rounded-xl p-5 mb-6 border border-gray-200">
           <p className="text-gray-700 text-center mb-3">
-            You are about to cancel your queue
+            {isOnRecallList
+              ? "You are about to cancel your queue from the recall list"
+              : "You are about to cancel your queue"}
           </p>
           <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
             <div className="flex items-center justify-between mb-2">
@@ -75,7 +79,19 @@ export default function CancelQueueModal({
                 Important Notice
               </h4>
               <ul className="space-y-2.5">
-                {queueInfo?.isLimitReached ? (
+                {isOnRecallList ? (
+                  <li className="flex items-start gap-2 text-sm text-amber-800">
+                    <FontAwesomeIcon
+                      icon={faInfoCircle}
+                      className="text-amber-600 mt-0.5 shrink-0"
+                    />
+                    <span>
+                      Canceling will permanently remove you from the recall
+                      list. You will need to take a new queue number if you wish
+                      to join again.
+                    </span>
+                  </li>
+                ) : queueInfo?.isLimitReached ? (
                   <li className="flex items-start gap-2 text-sm text-amber-800">
                     <FontAwesomeIcon
                       icon={faXmark}

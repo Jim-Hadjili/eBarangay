@@ -23,37 +23,45 @@ export default function ServicesList({
           {/* Mobile: Horizontal Carousel */}
           <div className="py-2 -mx-4 overflow-x-auto md:hidden scrollbar-hide">
             <div className="flex gap-4 pb-4">
-              {services.map((service) => (
-                <div
-                  key={service._id}
-                  onClick={() => onServiceClick(service)}
-                  className="cursor-pointer shrink-0 w-70"
-                >
-                  <ServiceOption
-                    service={service}
-                    selectedService={selectedService?._id}
-                    onSelect={() => onServiceClick(service)}
-                  />
-                </div>
-              ))}
+              {services.map((service) => {
+                const isDisabled =
+                  service.status === "full" || service.status === "unavailable";
+                return (
+                  <div
+                    key={service._id}
+                    onClick={() => !isDisabled && onServiceClick(service)}
+                    className={isDisabled ? "" : "cursor-pointer shrink-0 w-70"}
+                  >
+                    <ServiceOption
+                      service={service}
+                      selectedService={selectedService?._id}
+                      onSelect={() => !isDisabled && onServiceClick(service)}
+                    />
+                  </div>
+                );
+              })}
             </div>
           </div>
 
           {/* Desktop: Grid Layout */}
           <div className="hidden grid-cols-1 gap-6 md:grid md:grid-cols-3">
-            {services.map((service) => (
-              <div
-                key={service._id}
-                onClick={() => onServiceClick(service)}
-                className="cursor-pointer"
-              >
-                <ServiceOption
-                  service={service}
-                  selectedService={selectedService?._id}
-                  onSelect={() => onServiceClick(service)}
-                />
-              </div>
-            ))}
+            {services.map((service) => {
+              const isDisabled =
+                service.status === "full" || service.status === "unavailable";
+              return (
+                <div
+                  key={service._id}
+                  onClick={() => !isDisabled && onServiceClick(service)}
+                  className={isDisabled ? "" : "cursor-pointer"}
+                >
+                  <ServiceOption
+                    service={service}
+                    selectedService={selectedService?._id}
+                    onSelect={() => !isDisabled && onServiceClick(service)}
+                  />
+                </div>
+              );
+            })}
           </div>
         </>
       )}

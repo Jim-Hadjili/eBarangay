@@ -11,8 +11,17 @@ const serviceSchema = new mongoose.Schema(
       enum: ["available", "unavailable"],
       default: "available",
     },
+    monitoredBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+    monitoringSince: {
+      type: Date,
+      default: null,
+    },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 module.exports = mongoose.model("Service", serviceSchema);

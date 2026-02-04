@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 
-export const useSocket = (onYourTurn) => {
+export const useSocket = (onYourTurn, onSkipped) => {
   const socketRef = useRef(null);
   const [notificationModalOpen, setNotificationModalOpen] = useState(false);
+  const [skippedModalOpen, setSkippedModalOpen] = useState(false);
 
   useEffect(() => {
     // Initialize Socket.io connection
@@ -33,6 +34,27 @@ export const useSocket = (onYourTurn) => {
       }
     });
 
+    // Listen for "patient skipped" notification
+    socketRef.current.on("patientSkipped", (data) => {
+      console.log("You have been skipped!", data);
+      setNotificationModalOpen(false); // Close "Your Turn" modal
+      setSkippedModalOpen(true);
+      playNotificationSound();
+      vibrateDevice();
+
+      // Show browser notification if permitted
+      if ("Notification" in window && Notification.permission === "granted") {
+        new Notification("You Have Been Skipped", {
+          body: data.message || "You were skipped for not responding in time.",
+          icon: "/images/Logo.png",
+        });
+      }
+
+      if (onSkipped) {
+        onSkipped(data);
+      }
+    });
+
     // Request notification permission
     if ("Notification" in window && Notification.permission === "default") {
       Notification.requestPermission();
@@ -41,7 +63,7 @@ export const useSocket = (onYourTurn) => {
     return () => {
       if (socketRef.current) socketRef.current.disconnect();
     };
-  }, [onYourTurn]);
+  }, [onYourTurn, onSkipped]);
 
   const playNotificationSound = () => {
     const audio = new Audio("/notification.mp3");
@@ -70,6 +92,8 @@ export const useSocket = (onYourTurn) => {
     socket: socketRef.current,
     notificationModalOpen,
     setNotificationModalOpen,
+    skippedModalOpen,
+    setSkippedModalOpen,
     joinQueueRoom,
     leaveQueueRoom,
   };

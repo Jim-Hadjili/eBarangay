@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import AuthForm from "./AuthForm";
 import { register } from "../../services/authService";
 import { Link } from "react-router-dom";
+import TermsModal from "../modals/TermsModal";
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
@@ -15,12 +16,16 @@ export default function SignUp() {
     dateOfBirth: "",
     gender: "",
     address: "",
+    priorityStatus: "None",
   });
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [ageValidationError, setAgeValidationError] = useState("");
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
 
   useEffect(() => {
     if (success || error) {
@@ -32,11 +37,54 @@ export default function SignUp() {
     }
   }, [success, error]);
 
+  const calculateAge = (birthDate) => {
+    if (!birthDate) return null;
+    const today = new Date();
+    const birth = new Date(birthDate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birth.getDate())
+    ) {
+      age--;
+    }
+    return age;
+  };
+
+  const validateSeniorCitizen = (dateOfBirth, priorityStatus) => {
+    if (priorityStatus === "Senior Citizen" && dateOfBirth) {
+      const age = calculateAge(dateOfBirth);
+      if (age !== null && age < 60) {
+        setAgeValidationError(
+          "Senior Citizens must be 60 years or older. Please update your date of birth.",
+        );
+        return false;
+      }
+    }
+    setAgeValidationError("");
+    return true;
+  };
+
   const handleChange = (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
+    const { name, value } = e.target;
+
+    setFormData((prev) => {
+      const newFormData = {
+        ...prev,
+        [name]: value,
+      };
+
+      // Validate when date of birth or priority status changes
+      if (name === "dateOfBirth" || name === "priorityStatus") {
+        const dateOfBirth = name === "dateOfBirth" ? value : prev.dateOfBirth;
+        const priorityStatus =
+          name === "priorityStatus" ? value : prev.priorityStatus;
+        validateSeniorCitizen(dateOfBirth, priorityStatus);
+      }
+
+      return newFormData;
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -47,6 +95,22 @@ export default function SignUp() {
 
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match.");
+      setLoading(false);
+      return;
+    }
+
+    // Validate Senior Citizen age requirement
+    if (!validateSeniorCitizen(formData.dateOfBirth, formData.priorityStatus)) {
+      setError("Please correct the validation errors before submitting.");
+      setLoading(false);
+      return;
+    }
+
+    // Validate terms agreement
+    if (!agreedToTerms) {
+      setError(
+        "You must agree to the Data Privacy and Terms & Conditions to create an account.",
+      );
       setLoading(false);
       return;
     }
@@ -64,7 +128,10 @@ export default function SignUp() {
         dateOfBirth: "",
         gender: "",
         address: "",
+        priorityStatus: "None",
       });
+      setAgeValidationError("");
+      setAgreedToTerms(false);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -100,7 +167,7 @@ export default function SignUp() {
               placeholder="e.g. Juan"
               value={formData.firstName}
               onChange={handleChange}
-              className="w-full px-2.5 py-2.5 text-base transition-all border border-gray-200 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
+              className="w-full px-2.5 py-2 text-base transition-all border border-gray-200 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
               required
               disabled={loading}
             />
@@ -121,7 +188,7 @@ export default function SignUp() {
               placeholder="e.g. Dela Cruz"
               value={formData.lastName}
               onChange={handleChange}
-              className="w-full px-2.5 py-2.5 text-base transition-all border border-gray-200 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
+              className="w-full px-2.5 py-2 text-base transition-all border border-gray-200 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
               required
               disabled={loading}
             />
@@ -145,7 +212,7 @@ export default function SignUp() {
               placeholder="e.g. juan@email.com"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-2.5 py-2.5 text-base transition-all border border-gray-200 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
+              className="w-full px-2.5 py-2 text-base transition-all border border-gray-200 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
               required
               disabled={loading}
             />
@@ -166,7 +233,7 @@ export default function SignUp() {
               placeholder="e.g. 09123456789"
               value={formData.phone}
               onChange={handleChange}
-              className="w-full px-2.5 py-2.5 text-base transition-all border border-gray-200 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
+              className="w-full px-2.5 py-2 text-base transition-all border border-gray-200 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
               disabled={loading}
               maxLength={11}
               pattern="[0-9]{11}"
@@ -176,27 +243,29 @@ export default function SignUp() {
           </div>
         </div>
 
-        {/* Date of Birth and Gender Row */}
+        {/* Priority Status and Gender Row */}
         <div className="grid grid-cols-2 gap-2">
-          {/* Date of Birth Input */}
+          {/* Priority Status Input */}
           <div>
             <label
-              htmlFor="dateOfBirth"
+              htmlFor="priorityStatus"
               className="block mb-1 text-xs font-medium text-gray-700"
             >
-              Date of Birth
+              Priority Status
             </label>
-            <input
-              id="dateOfBirth"
-              type="date"
-              name="dateOfBirth"
-              placeholder="YYYY-MM-DD"
-              value={formData.dateOfBirth}
+            <select
+              id="priorityStatus"
+              name="priorityStatus"
+              value={formData.priorityStatus}
               onChange={handleChange}
-              className="w-full px-2.5 py-2.5 text-base transition-all border border-gray-200 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
+              className="w-full px-2.5 py-2 text-base transition-all border border-gray-200 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
               disabled={loading}
               required
-            />
+            >
+              <option value="None">None</option>
+              <option value="Senior Citizen">Senior Citizen</option>
+              <option value="PWD">PWD</option>
+            </select>
           </div>
 
           {/* Gender Input */}
@@ -212,7 +281,7 @@ export default function SignUp() {
               name="gender"
               value={formData.gender}
               onChange={handleChange}
-              className="w-full px-2.5 py-2.5 text-base transition-all border border-gray-200 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
+              className="w-full px-2.5 py-2 text-base transition-all border border-gray-200 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
               disabled={loading}
               required
             >
@@ -221,6 +290,34 @@ export default function SignUp() {
               <option value="Female">Female</option>
             </select>
           </div>
+        </div>
+
+        {/* Date of Birth Input - Full Width */}
+        <div>
+          <label
+            htmlFor="dateOfBirth"
+            className="block mb-1 text-xs font-medium text-gray-700"
+          >
+            Date of Birth
+          </label>
+          <input
+            id="dateOfBirth"
+            type="date"
+            name="dateOfBirth"
+            placeholder="YYYY-MM-DD"
+            value={formData.dateOfBirth}
+            onChange={handleChange}
+            className={`w-full px-2.5 py-2 text-base transition-all border bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent ${
+              ageValidationError
+                ? "border-red-500 focus:ring-red-400"
+                : "border-gray-200 focus:ring-green-400"
+            }`}
+            disabled={loading}
+            required
+          />
+          {ageValidationError && (
+            <p className="mt-1 text-xs text-red-600">{ageValidationError}</p>
+          )}
         </div>
 
         {/* Address Input - Full Width */}
@@ -237,8 +334,8 @@ export default function SignUp() {
             placeholder="e.g. 123 Mabini St., Brgy. Malinis, Lungsod ng Maynila"
             value={formData.address}
             onChange={handleChange}
-            rows="2"
-            className="w-full px-2.5 py-2.5 text-base transition-all border border-gray-200 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent resize-none"
+            rows="1"
+            className="w-full h-20 md:h-auto px-2.5 py-2 text-base transition-all border border-gray-200 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent resize-none"
             disabled={loading}
             required
           />
@@ -261,7 +358,7 @@ export default function SignUp() {
               placeholder="Password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full px-2.5 py-2.5 pr-8 text-base transition-all border border-gray-200 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
+              className="w-full px-2.5 py-2 pr-8 text-base transition-all border border-gray-200 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
               required
               disabled={loading}
             />
@@ -311,7 +408,7 @@ export default function SignUp() {
               placeholder="Re-enter"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="w-full px-2.5 py-2.5 pr-8 text-base transition-all border border-gray-200 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
+              className="w-full px-2.5 py-2 pr-8 text-base transition-all border border-gray-200 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
               required
               disabled={loading}
             />
@@ -346,7 +443,36 @@ export default function SignUp() {
             </button>
           </div>
         </div>
+
+        {/* Terms and Conditions Agreement */}
+        <div className="flex items-start gap-2 pt-1">
+          <input
+            type="checkbox"
+            id="termsAgreement"
+            checked={agreedToTerms}
+            onChange={(e) => setAgreedToTerms(e.target.checked)}
+            className="mt-0.5 w-4 h-4 text-green-500 border-gray-300 rounded cursor-pointer focus:ring-2 focus:ring-green-400"
+            disabled={loading}
+          />
+          <label htmlFor="termsAgreement" className="text-xs text-gray-700">
+            I agree to the{" "}
+            <button
+              type="button"
+              onClick={() => setShowTermsModal(true)}
+              className="font-semibold text-green-600 cursor-pointer hover:underline focus:outline-none"
+              disabled={loading}
+            >
+              Data Privacy and Terms & Conditions
+            </button>
+          </label>
+        </div>
       </AuthForm>
+
+      {/* Terms and Conditions Modal */}
+      <TermsModal
+        isOpen={showTermsModal}
+        onClose={() => setShowTermsModal(false)}
+      />
 
       {/* Divider */}
       <div className="flex items-center my-2">

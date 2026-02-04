@@ -1,12 +1,16 @@
 const User = require("../models/userSchema");
 const Service = require("../models/serviceSchema");
 const Queue = require("../models/queueSchema");
+const { getTodayMidnight } = require("../utils/dateHelper");
 
 exports.getDashboardStats = async (req, res) => {
   try {
-    // Get today's date at midnight
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    // Get session start time (7:00 PM of current session)
+    const sessionStart = getTodayMidnight();
+
+    // Get next session start (24 hours later)
+    const nextSessionStart = new Date(sessionStart);
+    nextSessionStart.setHours(nextSessionStart.getHours() + 24);
 
     // Total Patients (all users with userType 'Patient')
     const totalPatients = await User.countDocuments({ userType: "Patient" });
@@ -14,8 +18,14 @@ exports.getDashboardStats = async (req, res) => {
     // Active Services
     const activeServices = await Service.countDocuments();
 
-    // Queue Today (total queues for today)
-    const queueToday = await Queue.countDocuments({ date: today });
+    // Queue Today (queues within current session: waiting or serving)
+    const queueToday = await Queue.countDocuments({
+      createdAt: {
+        $gte: sessionStart,
+        $lt: nextSessionStart,
+      },
+      status: { $in: ["waiting", "serving"] },
+    });
 
     // Total Staff Available (all users with userType 'Admin' or 'Staff')
     const totalStaff = await User.countDocuments({
@@ -36,12 +46,22 @@ exports.getDashboardStats = async (req, res) => {
 // Helper function to emit dashboard updates
 exports.emitDashboardUpdate = async (io) => {
   try {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    // Get session start time (7:00 PM of current session)
+    const sessionStart = getTodayMidnight();
+
+    // Get next session start (24 hours later)
+    const nextSessionStart = new Date(sessionStart);
+    nextSessionStart.setHours(nextSessionStart.getHours() + 24);
 
     const totalPatients = await User.countDocuments({ userType: "Patient" });
     const activeServices = await Service.countDocuments();
-    const queueToday = await Queue.countDocuments({ date: today });
+    const queueToday = await Queue.countDocuments({
+      createdAt: {
+        $gte: sessionStart,
+        $lt: nextSessionStart,
+      },
+      status: { $in: ["waiting", "serving"] },
+    });
     const totalStaff = await User.countDocuments({
       userType: { $in: ["Admin", "Staff"] },
     });
@@ -74,6 +94,9 @@ exports.getAdminUsers = async (req, res) => {
         role: user.userType,
         status: "active", // You can add a status field to your schema if needed
         createdAt: user.createdAt,
+        profileImage: user.profileImage,
+        address: user.address || "N/A",
+        gender: user.gender || "N/A",
       })),
     });
   } catch (err) {
@@ -99,6 +122,7 @@ exports.getPatients = async (req, res) => {
         : "N/A",
       gender: patient.gender || "N/A",
       address: patient.address || "N/A",
+      profileImage: patient.profileImage || null,
     }));
 
     res.json({

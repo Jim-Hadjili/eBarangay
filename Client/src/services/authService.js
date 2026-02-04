@@ -15,8 +15,9 @@ export const register = async (formData) => {
         dateOfBirth: formData.dateOfBirth || null,
         gender: formData.gender || null,
         address: formData.address || null,
+        priorityStatus: formData.priorityStatus || "None",
       }),
-    }
+    },
   );
 
   const data = await response.json();

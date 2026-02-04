@@ -5,8 +5,15 @@ import { faFileMedical } from "@fortawesome/free-solid-svg-icons";
 export default function ViewMedicalRecordsButton() {
   const navigate = useNavigate();
 
+  const handleClick = () => {
+    navigate("/medical-history");
+  };
+
   return (
-    <button className="group cursor-pointer mt-4 relative flex flex-col items-start justify-between w-full h-full gap-3 p-6 text-left transition-all duration-200 bg-white border border-gray-200 shadow-sm hover:shadow-lg hover:border-green-400 hover:-translate-y-0.5 rounded-2xl overflow-hidden">
+    <button
+      onClick={handleClick}
+      className="group cursor-pointer mt-4 relative flex flex-col items-start justify-between w-full h-full gap-3 p-6 text-left transition-all duration-200 bg-white border border-gray-200 shadow-sm hover:shadow-lg hover:border-green-400 hover:-translate-y-0.5 rounded-2xl overflow-hidden"
+    >
       {/* Subtle gradient overlay on hover */}
       <div className="absolute inset-0 transition-opacity duration-200 opacity-0 bg-linear-to-br from-green-50 to-transparent group-hover:opacity-100" />
 

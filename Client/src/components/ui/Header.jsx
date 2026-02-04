@@ -3,6 +3,8 @@
 import { useState, useRef, useEffect } from "react";
 import LogOutModal from "../modals/logoutModal";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL?.replace("/api", "");
+
 export default function Header({
   onLogout,
   onEditProfile,
@@ -98,9 +100,17 @@ export default function Header({
                 aria-haspopup="true"
               >
                 {/* Avatar */}
-                <div className="flex items-center justify-center w-8 h-8 text-xs font-semibold text-white rounded-full sm:w-9 sm:h-9 md:w-10 md:h-10 bg-linear-to-br from-blue-500 to-blue-600 sm:text-sm shrink-0">
-                  {getInitials()}
-                </div>
+                {user?.profileImage ? (
+                  <img
+                    src={`${API_BASE_URL}${user.profileImage}`}
+                    alt="Profile"
+                    className="object-cover w-8 h-8 border-2 border-blue-500 rounded-full sm:w-9 sm:h-9 md:w-10 md:h-10 shrink-0"
+                  />
+                ) : (
+                  <div className="flex items-center justify-center w-8 h-8 text-xs font-semibold text-white rounded-full sm:w-9 sm:h-9 md:w-10 md:h-10 bg-linear-to-br from-blue-500 to-blue-600 sm:text-sm shrink-0">
+                    {getInitials()}
+                  </div>
+                )}
 
                 {/* User Name - Hidden on very small screens */}
                 <span className="hidden text-xs font-medium text-gray-700 truncate sm:block sm:text-sm max-w-30">

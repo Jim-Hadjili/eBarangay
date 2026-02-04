@@ -16,8 +16,15 @@ const queueSchema = new mongoose.Schema(
       required: true,
     },
     date: { type: Date, required: true },
+    status: {
+      type: String,
+      enum: ["waiting", "serving", "completed", "cancelled"],
+      default: "waiting",
+    },
+    servingStartedAt: { type: Date, default: null },
+    servedAt: { type: Date, default: null },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 module.exports = mongoose.model("Queue", queueSchema);

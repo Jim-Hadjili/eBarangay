@@ -7,11 +7,16 @@ import {
   isTokenValid,
   getUserFromToken,
   clearToken,
+  setToken,
 } from "../utils/session";
+import EditProfileModal from "../components/modals/EditProfileModal";
+import useEditProfile from "../hooks/useEditProfile";
 
 export default function PatientDashboard() {
   const [user, setUser] = useState(null);
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const navigate = useNavigate();
+  const { updateProfile } = useEditProfile();
 
   useEffect(() => {
     const token = getToken();
@@ -38,13 +43,24 @@ export default function PatientDashboard() {
   };
 
   const handleEditProfile = () => {
-    // TODO: Implement edit profile functionality
-    console.log("Edit profile clicked");
+    setIsEditProfileOpen(true);
   };
 
   const handleQueueHistory = () => {
-    // TODO: Implement queue history functionality
-    console.log("Queue history clicked");
+    navigate("/queue-history");
+  };
+
+  const handleSaveProfile = async (formData) => {
+    try {
+      const response = await updateProfile(formData);
+      // Update token with new user data
+      setToken(response.token);
+      // Update local user state
+      setUser(getUserFromToken(response.token));
+      setIsEditProfileOpen(false);
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
   };
 
   return (
@@ -56,6 +72,12 @@ export default function PatientDashboard() {
         onQueueHistory={handleQueueHistory}
       />
       <Services />
+      <EditProfileModal
+        isOpen={isEditProfileOpen}
+        onClose={() => setIsEditProfileOpen(false)}
+        user={user}
+        onSave={handleSaveProfile}
+      />
     </>
   );
 }

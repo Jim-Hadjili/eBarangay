@@ -7,6 +7,7 @@ import ServicesList from "../../components/patientDashboard/ServicesList";
 import QueueCard from "../../components/patientDashboard/QueueCard";
 import QueueInfoModal from "../../components/patientDashboard/QueueInfoModal";
 import YourTurnModal from "../../components/patientDashboard/YourTurnModal";
+import SkippedModal from "../../components/patientDashboard/SkippedModal";
 import CancelQueueModal from "../../components/modals/CancelQueueModal";
 import NotificationModal from "../../components/modals/NotificationModal";
 import LoadingModal from "../../components/modals/LoadingModal";
@@ -19,6 +20,8 @@ export default function Services() {
   const {
     notificationModalOpen,
     setNotificationModalOpen,
+    skippedModalOpen,
+    setSkippedModalOpen,
     joinQueueRoom,
     leaveQueueRoom,
   } = useSocket();
@@ -158,6 +161,11 @@ export default function Services() {
         isOpen={notificationModalOpen}
         onClose={() => setNotificationModalOpen(false)}
         userQueue={userQueue}
+      />
+      <SkippedModal
+        isOpen={skippedModalOpen}
+        onClose={() => setSkippedModalOpen(false)}
+        queueInfo={userQueue}
       />
       <LoadingModal
         isOpen={openingServiceLoading}

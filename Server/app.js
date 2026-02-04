@@ -4,6 +4,7 @@ const cors = require("cors");
 const http = require("http");
 const { Server } = require("socket.io");
 const connectDB = require("./config/databaseConnection");
+const path = require("path");
 require("dotenv").config();
 
 connectDB();
@@ -27,16 +28,23 @@ app.use(
   cors({
     origin: "*",
     credentials: true,
-  })
+  }),
 );
 
 app.use(express.json());
+
+// Serve uploaded files
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use("/api/auth", require("./routes/auth.routes"));
 app.use("/api/services", require("./routes/services.routes"));
 app.use("/api/queue", require("./routes/queue.routes"));
 app.use("/api/dashboard", require("./routes/dashboard.routes"));
 app.use("/api/activity", require("./routes/activity.routes"));
+app.use("/api/monitoring", require("./routes/monitoring.routes"));
+app.use("/api/medical-records", require("./routes/medicalRecord.routes")); // Add this line
+app.use("/api/waiting-time", require("./routes/waitingTime.routes")); // Add waiting time routes
+app.use("/api/reports", require("./routes/reports.routes")); // Add reports routes
 
 // Socket.io connection handling
 io.on("connection", (socket) => {
@@ -52,6 +60,22 @@ io.on("connection", (socket) => {
   socket.on("leaveQueueRoom", (queueCode) => {
     socket.leave(queueCode);
     console.log(`User ${socket.id} left queue room: ${queueCode}`);
+  });
+
+  // User joins queue history room for real-time updates
+  socket.on("joinQueueHistory", () => {
+    const userId = socket.handshake.auth?.userId || socket.id;
+    const roomName = `queueHistory_${userId}`;
+    socket.join(roomName);
+    console.log(`User ${socket.id} joined queue history room: ${roomName}`);
+  });
+
+  // User leaves queue history room
+  socket.on("leaveQueueHistory", () => {
+    const userId = socket.handshake.auth?.userId || socket.id;
+    const roomName = `queueHistory_${userId}`;
+    socket.leave(roomName);
+    console.log(`User ${socket.id} left queue history room: ${roomName}`);
   });
 
   // Admin joins dashboard room for real-time updates

@@ -5,14 +5,21 @@ import {
   Trash2,
   Calendar,
   MapPin,
+  User,
   User2,
   UserRound,
 } from "lucide-react";
+import { SOCKET_URL } from "../../../hooks/usePatients";
 import DeleteConfirmModal from "../../ui/DeleteConfirmModal";
 import Pagination from "../../ui/Pagination";
 import { useDeleteAdmin } from "../../../hooks/useDeleteAdmin";
 
-export default function UserGrid({ adminUsers, currentUser, onDeleteSuccess }) {
+export default function UserGrid({
+  adminUsers,
+  currentUser,
+  onDeleteSuccess,
+  onProfileClick,
+}) {
   // Check if current user is Super Admin (based on userType from JWT)
   const isSuperAdmin = currentUser?.userType === "Super Admin";
   const [deleteModal, setDeleteModal] = useState({
@@ -69,7 +76,7 @@ export default function UserGrid({ adminUsers, currentUser, onDeleteSuccess }) {
               className={`relative flex flex-col overflow-hidden transition-shadow duration-200 bg-white shadow-sm rounded-xl hover:shadow-lg ${
                 isYou
                   ? "border-2 border-green-500 shadow-lg ring-2 ring-green-200"
-                  : "border border-gray-200"
+                  : "border-2 border-gray-200"
               }`}
               style={{ animationDelay: `${idx * 50}ms` }}
             >
@@ -84,17 +91,26 @@ export default function UserGrid({ adminUsers, currentUser, onDeleteSuccess }) {
               <div className="flex flex-col flex-1 p-6">
                 {/* Avatar and Name */}
                 <div className="flex items-center gap-4 mb-4">
-                  <div
-                    className={`flex items-center justify-center rounded-full shadow-md w-16 h-16 ${
+                  <button
+                    onClick={() => onProfileClick(admin)}
+                    className={`flex items-center justify-center rounded-full shadow-md w-16 h-16 overflow-hidden transition-transform duration-200 cursor-pointer hover:scale-105 ${
                       isYou ? "bg-green-500" : "bg-green-500"
                     }`}
                   >
-                    <UserRound
-                      size={36}
-                      className="text-white"
-                      strokeWidth={2.5}
-                    />
-                  </div>
+                    {admin.profileImage ? (
+                      <img
+                        src={`${SOCKET_URL}${admin.profileImage}`}
+                        alt={admin.name}
+                        className="object-cover w-full h-full"
+                      />
+                    ) : (
+                      <User
+                        size={36}
+                        className="text-white"
+                        strokeWidth={2.5}
+                      />
+                    )}
+                  </button>
                   <div className="flex-1">
                     <h3 className="text-lg font-bold text-gray-900 font-Lexend">
                       {admin.name}
@@ -111,10 +127,7 @@ export default function UserGrid({ adminUsers, currentUser, onDeleteSuccess }) {
                     <Mail size={16} className="text-green-600" />
                     <span className="truncate">{admin.email}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-gray-600 font-Lexend">
-                    <Phone size={16} className="text-green-600" />
-                    <span>{admin.phone || "Not provided"}</span>
-                  </div>
+
                   <div className="flex items-center gap-2 text-sm text-gray-600 font-Lexend">
                     <Calendar size={16} className="text-green-600" />
                     <span>
@@ -126,26 +139,11 @@ export default function UserGrid({ adminUsers, currentUser, onDeleteSuccess }) {
                               year: "numeric",
                               month: "short",
                               day: "numeric",
-                            }
+                            },
                           )
                         : "N/A"}
                     </span>
                   </div>
-                  {admin.address && (
-                    <div className="flex items-start gap-2 text-sm text-gray-600 font-Lexend">
-                      <MapPin
-                        size={16}
-                        className="mt-0.5 text-green-600 shrink-0"
-                      />
-                      <span className="line-clamp-2">{admin.address}</span>
-                    </div>
-                  )}
-                  {admin.gender && (
-                    <div className="flex items-center gap-2 text-sm text-gray-600 font-Lexend">
-                      <User2 size={16} className="text-green-600" />
-                      <span>{admin.gender}</span>
-                    </div>
-                  )}
                 </div>
 
                 {/* Actions */}

@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { io } from "socket.io-client";
 import { getToken } from "../utils/session";
 
-const SOCKET_URL = import.meta.env.VITE_API_URL.replace(/\/api$/, "");
+export const SOCKET_URL = import.meta.env.VITE_API_URL.replace(/\/api$/, "");
 
 export const usePatients = () => {
   const [patients, setPatients] = useState([]);
@@ -18,7 +18,7 @@ export const usePatients = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {

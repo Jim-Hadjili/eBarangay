@@ -45,8 +45,25 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    priorityStatus: {
+      type: String,
+      enum: ["None", "Senior Citizen", "PWD"],
+      default: "None",
+    },
+    weight: {
+      type: Number,
+      default: null,
+    },
+    height: {
+      type: Number,
+      default: null,
+    },
+    profileImage: {
+      type: String,
+      default: null,
+    },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 // Hash password before saving

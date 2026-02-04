@@ -2,28 +2,50 @@ const Service = require("../models/serviceSchema");
 const Queue = require("../models/queueSchema");
 const { emitDashboardUpdate } = require("./dashboard.controller");
 const ActivityLogger = require("../utils/activityLogger");
+const { getTodayMidnight } = require("../utils/dateHelper");
 
 // Get all services with current queue count
 exports.getAllServices = async (req, res) => {
   try {
-    // Get today's date at midnight
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    // Get session start time (7:00 PM of current session)
+    const sessionStart = getTodayMidnight();
+
+    // Get next session start (24 hours later)
+    const nextSessionStart = new Date(sessionStart);
+    nextSessionStart.setHours(nextSessionStart.getHours() + 24);
 
     const services = await Service.find();
 
     // Get queue count for each service
     const servicesWithQueue = await Promise.all(
       services.map(async (service) => {
-        const queueCount = await Queue.countDocuments({
+        // Count for display (only active waiting/serving patients)
+        const activeQueueCount = await Queue.countDocuments({
           service: service._id,
-          date: today,
+          createdAt: {
+            $gte: sessionStart,
+            $lt: nextSessionStart,
+          },
+          status: { $in: ["waiting", "serving"] },
+        });
+
+        // Count for limit check (all slots issued except cancelled)
+        const totalSlotsIssued = await Queue.countDocuments({
+          service: service._id,
+          createdAt: {
+            $gte: sessionStart,
+            $lt: nextSessionStart,
+          },
+          status: { $ne: "cancelled" },
         });
 
         // Determine status based on service.status and queue limit
         let displayStatus = service.status || "available";
         if (service.status === "available") {
-          if (service.queueLimit !== null && queueCount >= service.queueLimit) {
+          if (
+            service.queueLimit !== null &&
+            totalSlotsIssued >= service.queueLimit
+          ) {
             displayStatus = "full";
           } else {
             displayStatus = "active";
@@ -39,11 +61,11 @@ exports.getAllServices = async (req, res) => {
           description: service.description,
           identifier: service.identifier,
           queueLimit: service.queueLimit,
-          queue: queueCount,
+          queue: activeQueueCount, // Show only active waiting count
           status: displayStatus,
           serviceStatus: service.status || "available", // Add the actual service status
         };
-      })
+      }),
     );
 
     res.json({ services: servicesWithQueue });
@@ -115,7 +137,7 @@ exports.updateService = async (req, res) => {
     const service = await Service.findOneAndUpdate(
       { identifier: id },
       updateData,
-      { new: true }
+      { new: true },
     );
 
     if (!service) return res.status(404).json({ message: "Service not found" });
@@ -150,11 +172,16 @@ exports.deleteService = async (req, res) => {
     if (!service) return res.status(404).json({ message: "Service not found" });
 
     // Check if there are any active queues for this service
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const sessionStart = getTodayMidnight();
+    const nextSessionStart = new Date(sessionStart);
+    nextSessionStart.setHours(nextSessionStart.getHours() + 24);
+
     const activeQueues = await Queue.countDocuments({
       service: service._id,
-      date: today,
+      createdAt: {
+        $gte: sessionStart,
+        $lt: nextSessionStart,
+      },
       status: { $in: ["waiting", "serving"] },
     });
 

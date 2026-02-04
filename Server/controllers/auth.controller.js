@@ -4,6 +4,46 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/userSchema");
 const { emitDashboardUpdate } = require("./dashboard.controller");
 const ActivityLogger = require("../utils/activityLogger");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
+
+// Configure multer for file upload
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const uploadDir = path.join(__dirname, "../uploads/profiles");
+    // Create directory if it doesn't exist
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, "profile-" + uniqueSuffix + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+  fileFilter: function (req, file, cb) {
+    const filetypes = /jpeg|jpg|png|gif/;
+    const mimetype = filetypes.test(file.mimetype);
+    const extname = filetypes.test(
+      path.extname(file.originalname).toLowerCase(),
+    );
+
+    if (mimetype && extname) {
+      return cb(null, true);
+    }
+    cb(new Error("Only image files are allowed!"));
+  },
+});
+
+exports.uploadProfileImage = upload.single("profileImage");
 
 exports.login = async (req, res) => {
   try {
@@ -26,11 +66,16 @@ exports.login = async (req, res) => {
         lastName: user.lastName,
         email: user.email,
         userType: user.userType,
+        profileImage: user.profileImage,
+        dateOfBirth: user.dateOfBirth,
+        phone: user.phone,
+        gender: user.gender,
+        address: user.address,
       },
       process.env.JWT_SECRET,
       {
         expiresIn: process.env.JWT_EXPIRES_IN,
-      }
+      },
     );
 
     // Log activity
@@ -63,6 +108,7 @@ exports.register = async (req, res) => {
       dateOfBirth,
       gender,
       address,
+      priorityStatus,
     } = req.body;
 
     if (!firstName || !lastName || !email || !password)
@@ -81,6 +127,7 @@ exports.register = async (req, res) => {
       gender: gender || null,
       address: address || null,
       userType: "Patient",
+      priorityStatus: priorityStatus || "None",
     });
 
     // Log activity
@@ -285,6 +332,118 @@ exports.deletePatient = async (req, res) => {
     });
   } catch (err) {
     console.error("Delete patient error:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+exports.updateProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const {
+      firstName,
+      lastName,
+      phone,
+      dateOfBirth,
+      gender,
+      currentPassword,
+      newPassword,
+    } = req.body;
+
+    // Find the user
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // If user wants to update password, validate current password
+    if (currentPassword && newPassword) {
+      const isPasswordValid = await bcrypt.compare(
+        currentPassword,
+        user.password,
+      );
+      if (!isPasswordValid) {
+        return res
+          .status(401)
+          .json({ message: "Current password is incorrect" });
+      }
+    }
+
+    // Prepare update object
+    const updateData = {};
+    if (firstName) updateData.firstName = firstName;
+    if (lastName) updateData.lastName = lastName;
+    if (phone !== undefined) updateData.phone = phone;
+    if (dateOfBirth) updateData.dateOfBirth = dateOfBirth;
+    if (gender) updateData.gender = gender;
+
+    // Hash and update password if provided
+    if (newPassword && currentPassword) {
+      const salt = await bcrypt.genSalt(10);
+      updateData.password = await bcrypt.hash(newPassword, salt);
+    }
+
+    // Handle profile image upload
+    if (req.file) {
+      // Delete old profile image if exists
+      if (user.profileImage) {
+        const oldImagePath = path.join(
+          __dirname,
+          "../uploads/profiles",
+          path.basename(user.profileImage),
+        );
+        if (fs.existsSync(oldImagePath)) {
+          fs.unlinkSync(oldImagePath);
+        }
+      }
+      updateData.profileImage = `/uploads/profiles/${req.file.filename}`;
+    }
+
+    // Update user
+    const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
+      new: true,
+      runValidators: true,
+    }).select("-password");
+
+    // Log activity
+    await ActivityLogger.log({
+      activityType: "profile_updated",
+      description: `${updatedUser.firstName} ${updatedUser.lastName} updated their profile`,
+      performedBy: userId,
+    });
+
+    // Generate new token with updated information
+    const token = jwt.sign(
+      {
+        id: updatedUser._id,
+        firstName: updatedUser.firstName,
+        lastName: updatedUser.lastName,
+        email: updatedUser.email,
+        userType: updatedUser.userType,
+        profileImage: updatedUser.profileImage,
+        dateOfBirth: updatedUser.dateOfBirth,
+        phone: updatedUser.phone,
+        gender: updatedUser.gender,
+        address: updatedUser.address,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: process.env.JWT_EXPIRES_IN,
+      },
+    );
+
+    // Emit activity update
+    const io = req.app.get("io");
+    if (io) {
+      io.to("dashboard").emit("activityUpdate");
+    }
+
+    res.json({
+      message: "Profile updated successfully",
+      user: updatedUser,
+      token: token,
+    });
+  } catch (err) {
+    console.error("Update profile error:", err);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };

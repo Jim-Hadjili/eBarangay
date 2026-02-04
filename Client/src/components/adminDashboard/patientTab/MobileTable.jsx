@@ -1,8 +1,14 @@
 import { Eye, Trash2, MapPin, User } from "lucide-react";
 import { useState } from "react";
 import Pagination from "../../ui/Pagination";
+import { SOCKET_URL } from "../../../hooks/usePatients";
 
-export default function MobileTable({ patients, onDelete }) {
+export default function MobileTable({
+  patients,
+  onDelete,
+  onView,
+  onProfileClick,
+}) {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
@@ -22,9 +28,20 @@ export default function MobileTable({ patients, onDelete }) {
               className="overflow-hidden transition-all duration-200 bg-white border border-gray-200 shadow-sm rounded-xl hover:shadow-md"
             >
               <div className="flex items-center gap-3 p-4 border-b border-gray-100">
-                <div className="flex items-center justify-center w-12 h-12 bg-blue-500 rounded-full font-Lexend">
-                  <User size={28} className="text-white" />
-                </div>
+                <button
+                  onClick={() => onProfileClick(patient)}
+                  className="flex items-center justify-center w-12 h-12 overflow-hidden transition-all duration-200 bg-blue-500 rounded-full cursor-pointer font-Lexend hover:ring-4 hover:ring-blue-200"
+                >
+                  {patient.profileImage ? (
+                    <img
+                      src={`${SOCKET_URL}${patient.profileImage}`}
+                      alt={patient.name}
+                      className="object-cover w-full h-full"
+                    />
+                  ) : (
+                    <User size={28} className="text-white" />
+                  )}
+                </button>
                 <div className="flex-1 min-w-0">
                   <h3 className="text-base font-bold text-gray-900 truncate font-Lexend">
                     {patient.name}
@@ -52,7 +69,10 @@ export default function MobileTable({ patients, onDelete }) {
                   <span>{patient.registeredDate}</span>
                 </div>
                 <div className="flex gap-2 pt-2">
-                  <button className="flex-1 cursor-pointer flex items-center justify-center gap-2 px-4 py-2.5 text-green-700 font-semibold bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 hover:border-green-300 transition-all duration-200 font-Lexend">
+                  <button
+                    onClick={() => onView(patient)}
+                    className="flex-1 cursor-pointer flex items-center justify-center gap-2 px-4 py-2.5 text-green-700 font-semibold bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 hover:border-green-300 transition-all duration-200 font-Lexend"
+                  >
                     <Eye size={18} />
                     <span>View</span>
                   </button>

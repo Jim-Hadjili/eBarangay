@@ -2,8 +2,14 @@ import { Eye, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { User } from "lucide-react";
 import Pagination from "../../ui/Pagination";
+import { SOCKET_URL } from "../../../hooks/usePatients";
 
-export default function DesktopTable({ patients, onDelete }) {
+export default function DesktopTable({
+  patients,
+  onDelete,
+  onView,
+  onProfileClick,
+}) {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -49,9 +55,20 @@ export default function DesktopTable({ patients, onDelete }) {
                   >
                     <td className="px-6 py-5">
                       <div className="flex items-center gap-3">
-                        <div className="flex items-center justify-center w-10 h-10 bg-blue-500 rounded-full font-Lexend">
-                          <User size={24} className="text-white" />
-                        </div>
+                        <button
+                          onClick={() => onProfileClick(patient)}
+                          className="flex items-center justify-center w-10 h-10 overflow-hidden transition-all duration-200 bg-blue-500 rounded-full cursor-pointer font-Lexend hover:ring-4 hover:ring-blue-200"
+                        >
+                          {patient.profileImage ? (
+                            <img
+                              src={`${SOCKET_URL}${patient.profileImage}`}
+                              alt={patient.name}
+                              className="object-cover w-full h-full"
+                            />
+                          ) : (
+                            <User size={24} className="text-white" />
+                          )}
+                        </button>
                         <div>
                           <p className="font-semibold text-gray-900 font-Lexend">
                             {patient.name}
@@ -77,6 +94,7 @@ export default function DesktopTable({ patients, onDelete }) {
                     <td className="px-6 py-5">
                       <div className="flex items-center justify-end gap-2">
                         <button
+                          onClick={() => onView(patient)}
                           className="group/btn p-2.5 text-green-600 bg-green-50 border border-green-100 rounded-lg hover:bg-green-100 hover:border-green-200 transition-all duration-200 hover:shadow-sm cursor-pointer"
                           aria-label="View"
                         >
