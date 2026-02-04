@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { io } from "socket.io-client";
+import socketService from "../services/socketService";
 
 export const useWaitingTime = (queueId, serviceId, queueCode) => {
   const [waitingTimeData, setWaitingTimeData] = useState(null);
@@ -24,8 +24,8 @@ export const useWaitingTime = (queueId, serviceId, queueCode) => {
       queueCode,
     });
 
-    // Initialize socket connection
-    socketRef.current = io(import.meta.env.VITE_API_URL.replace("/api", ""));
+    // Use the singleton socket service
+    socketRef.current = socketService.getSocket();
 
     // Fetch initial waiting time data
     const fetchWaitingTime = async () => {
@@ -101,7 +101,7 @@ export const useWaitingTime = (queueId, serviceId, queueCode) => {
       });
 
       // Listen for general service waiting time updates
-      socketRef.current.on("waitingTimeUpdate", (data) => {
+      const handleWaitingTimeUpdate = (data) => {
         console.log("Received service waiting time update:", data);
         if (data.isMonitored && data.waitingTimes) {
           const myWaitingTime = data.waitingTimes.find(
@@ -117,19 +117,18 @@ export const useWaitingTime = (queueId, serviceId, queueCode) => {
             });
           }
         }
-      });
+      };
+
+      socketService.on("waitingTimeUpdate", handleWaitingTimeUpdate);
     }
 
     // Cleanup
     return () => {
-      if (socketRef.current) {
-        if (queueCode) {
-          socketRef.current.emit("leaveQueueRoom", queueCode);
-        }
-        socketRef.current.off("yourWaitingTime");
-        socketRef.current.off("waitingTimeUpdate");
-        socketRef.current.disconnect();
+      if (queueCode) {
+        socketService.emit("leaveQueueRoom", queueCode);
       }
+      socketService.off("yourWaitingTime");
+      socketService.off("waitingTimeUpdate");
     };
   }, [queueId, serviceId, queueCode]);
 

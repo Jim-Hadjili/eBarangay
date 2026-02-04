@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { io } from "socket.io-client";
+import socketService from "../services/socketService";
 
 export const useSocket = (onYourTurn, onSkipped) => {
   const socketRef = useRef(null);
@@ -7,15 +7,10 @@ export const useSocket = (onYourTurn, onSkipped) => {
   const [skippedModalOpen, setSkippedModalOpen] = useState(false);
 
   useEffect(() => {
-    // Initialize Socket.io connection
-    socketRef.current = io(import.meta.env.VITE_API_URL.replace("/api", ""));
+    // Use the singleton socket service
+    socketRef.current = socketService.getSocket();
 
-    socketRef.current.on("connect", () => {
-      console.log("Connected to socket server");
-    });
-
-    // Listen for "your turn" notification
-    socketRef.current.on("yourTurn", (data) => {
+    const handleYourTurn = (data) => {
       console.log("It's your turn!", data);
       setNotificationModalOpen(true);
       playNotificationSound();
@@ -32,10 +27,9 @@ export const useSocket = (onYourTurn, onSkipped) => {
       if (onYourTurn) {
         onYourTurn(data);
       }
-    });
+    };
 
-    // Listen for "patient skipped" notification
-    socketRef.current.on("patientSkipped", (data) => {
+    const handlePatientSkipped = (data) => {
       console.log("You have been skipped!", data);
       setNotificationModalOpen(false); // Close "Your Turn" modal
       setSkippedModalOpen(true);
@@ -53,7 +47,13 @@ export const useSocket = (onYourTurn, onSkipped) => {
       if (onSkipped) {
         onSkipped(data);
       }
-    });
+    };
+
+    // Listen for "your turn" notification
+    socketService.on("yourTurn", handleYourTurn);
+
+    // Listen for "patient skipped" notification
+    socketService.on("patientSkipped", handlePatientSkipped);
 
     // Request notification permission
     if ("Notification" in window && Notification.permission === "default") {
@@ -61,7 +61,9 @@ export const useSocket = (onYourTurn, onSkipped) => {
     }
 
     return () => {
-      if (socketRef.current) socketRef.current.disconnect();
+      // Clean up listeners but don't disconnect the singleton socket
+      socketService.off("yourTurn", handleYourTurn);
+      socketService.off("patientSkipped", handlePatientSkipped);
     };
   }, [onYourTurn, onSkipped]);
 
@@ -77,15 +79,11 @@ export const useSocket = (onYourTurn, onSkipped) => {
   };
 
   const joinQueueRoom = (queueCode) => {
-    if (socketRef.current) {
-      socketRef.current.emit("joinQueueRoom", queueCode);
-    }
+    socketService.emit("joinQueueRoom", queueCode);
   };
 
   const leaveQueueRoom = (queueCode) => {
-    if (socketRef.current) {
-      socketRef.current.emit("leaveQueueRoom", queueCode);
-    }
+    socketService.emit("leaveQueueRoom", queueCode);
   };
 
   return {
