@@ -82,7 +82,7 @@ export default function UserGrid({
             >
               {/* You Badge */}
               {isYou && (
-                <span className="absolute z-10 px-3 py-1 text-xs font-semibold text-white bg-green-500 border border-green-600 rounded-full top-4 right-4 font-Lexend">
+                <span className="absolute z-10 px-3 py-1 text-xs text-white bg-green-500 border border-green-600 rounded-full top-4 right-4 font-Lexend">
                   You
                 </span>
               )}
@@ -112,10 +112,10 @@ export default function UserGrid({
                     )}
                   </button>
                   <div className="flex-1">
-                    <h3 className="text-lg font-bold text-gray-900 font-Lexend">
+                    <h3 className="text-lg font-bold text-gray-900 truncate font-sans-serif sm:text-xl font-Lexend">
                       {admin.name}
                     </h3>
-                    <span className="inline-block px-2 py-1 mt-1 text-xs font-semibold text-green-700 bg-green-100 border border-green-200 rounded-md font-Lexend">
+                    <span className="inline-block px-2 py-1 mt-1 text-xs text-green-700 bg-green-100 border border-green-200 rounded-md font-Lexend">
                       {admin.role} / Staff
                     </span>
                   </div>
@@ -151,7 +151,7 @@ export default function UserGrid({
                   <div className="flex gap-2 pt-4 mt-auto border-t border-gray-100">
                     <button
                       onClick={() => handleDeleteClick(admin)}
-                      className="flex-1 cursor-pointer flex items-center justify-center gap-2 px-4 py-2.5 text-red-700 font-semibold bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 hover:border-red-300 transition-all duration-200 font-Lexend"
+                      className="flex-1 cursor-pointer flex items-center justify-center gap-2 px-4 py-2.5 text-red-700 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 hover:border-red-300 transition-all duration-200 font-Lexend"
                     >
                       <Trash2 size={18} strokeWidth={2} />
                       <span>Remove Admin</span>

@@ -44,9 +44,6 @@ export default function ServiceQueueCard({ service, onClick }) {
               {service.name}
             </h3>
           </div>
-          <p className="text-sm text-gray-600 line-clamp-2 font-Lexend">
-            {service.description}
-          </p>
         </div>
         <div className="pt-4 border-t border-gray-100">
           <div className="flex items-center justify-between">

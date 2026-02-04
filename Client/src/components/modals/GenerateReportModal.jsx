@@ -94,7 +94,7 @@ export default function GenerateReportModal({ isOpen, onClose }) {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="large">
-      <div className="flex flex-col w-full gap-6">
+      <div className="flex flex-col w-full gap-4">
         {/* Header */}
         <div className="text-center">
           <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full">
@@ -269,7 +269,7 @@ export default function GenerateReportModal({ isOpen, onClose }) {
           <button
             onClick={handleGenerate}
             disabled={loading || !isValidConfig()}
-            className="flex-1 px-4 py-3 font-medium text-white transition-colors bg-blue-600 rounded-lg cursor-pointer hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="flex items-center justify-center flex-1 gap-2 px-4 py-3 font-medium text-white transition-colors bg-blue-600 rounded-lg cursor-pointer hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
               <>

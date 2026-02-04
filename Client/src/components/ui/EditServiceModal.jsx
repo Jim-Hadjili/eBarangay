@@ -101,9 +101,9 @@ export default function EditServiceModal({
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:gap-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-2 ">
           {/* Service Identifier */}
-          <div className="flex flex-col gap-1.5 sm:gap-2">
+          <div className="flex flex-col gap-1.5 ">
             <label
               htmlFor="identifier"
               className="text-xs font-semibold text-gray-700 sm:text-sm font-Lexend"

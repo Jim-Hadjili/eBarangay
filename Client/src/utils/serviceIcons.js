@@ -10,10 +10,21 @@ import {
   faFileText,
   faBandage,
   faClockRotateLeft,
+  faUserDoctor,
+  faPersonPregnant,
+  faBabyCarriage,
+  faTooth,
+  faFlaskVial,
+  faXRay,
+  faWaveSquare,
+  faPersonWalking,
+  faFileCircleCheck,
+  faVials,
 } from "@fortawesome/free-solid-svg-icons";
 
 // Map service identifiers to FontAwesome icons
 export const serviceIconMap = {
+  // Original services
   general_checkup: faStethoscope,
   maternity_checkup: faBaby,
   vaccination: faSyringe,
@@ -25,6 +36,21 @@ export const serviceIconMap = {
   medical_certificate: faFileText,
   minor_wound_treatment: faBandage,
   follow_up_consultation: faClockRotateLeft,
+
+  // New healthcare services
+  general_consultation: faUserDoctor,
+  prenatal_care: faPersonPregnant,
+  postnatal_care: faBabyCarriage,
+  dental_services: faTooth,
+  laboratory_tests: faFlaskVial,
+  xray: faXRay,
+  ultrasound: faWaveSquare,
+  wound_care: faBandage,
+  blood_pressure_check: faHeartPulse,
+  physical_therapy: faPersonWalking,
+  medical_clearance: faFileCircleCheck,
+  drug_testing: faVials,
+  injection_service: faSyringe,
 };
 
 // Get icon for a service by identifier or name

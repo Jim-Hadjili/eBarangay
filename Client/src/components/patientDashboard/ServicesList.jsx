@@ -2,6 +2,7 @@ import ServiceOption from "../features/queue/ServicesOption";
 
 export default function ServicesList({
   services,
+  paginatedServices,
   loading,
   selectedService,
   onServiceClick,
@@ -45,7 +46,7 @@ export default function ServicesList({
 
           {/* Desktop: Grid Layout */}
           <div className="hidden grid-cols-1 gap-6 md:grid md:grid-cols-3">
-            {services.map((service) => {
+            {paginatedServices.map((service) => {
               const isDisabled =
                 service.status === "full" || service.status === "unavailable";
               return (

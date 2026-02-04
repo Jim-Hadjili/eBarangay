@@ -217,7 +217,6 @@ export default function SignUp() {
               disabled={loading}
             />
           </div>
-
           {/* Phone Input */}
           <div>
             <label
@@ -232,7 +231,10 @@ export default function SignUp() {
               name="phone"
               placeholder="e.g. 09123456789"
               value={formData.phone}
-              onChange={handleChange}
+              onChange={(e) => {
+                const value = e.target.value.replace(/\D/g, "");
+                handleChange({ target: { name: "phone", value } });
+              }}
               className="w-full px-2.5 py-2 text-base transition-all border border-gray-200 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
               disabled={loading}
               maxLength={11}

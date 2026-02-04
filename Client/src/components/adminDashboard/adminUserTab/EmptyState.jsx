@@ -7,10 +7,11 @@ export default function EmptyState({ onAddClick }) {
         <User className="w-10 h-10 text-gray-400" />
       </div>
       <h3 className="mb-2 text-lg font-bold text-gray-900 font-Lexend">
-        No Admin Users
+        No Admin/Staff Users Found
       </h3>
       <p className="mb-6 text-sm text-gray-600 font-Lexend">
-        Get started by adding your first admin user
+        Get started by adding your first admin or staff user to manage the
+        system.
       </p>
       <button
         onClick={onAddClick}
@@ -21,7 +22,7 @@ export default function EmptyState({ onAddClick }) {
           strokeWidth={2.5}
           className="transition-transform duration-200 group-hover:rotate-90"
         />
-        <span>Add Admin User</span>
+        <span>Add Admin</span>
       </button>
     </div>
   );

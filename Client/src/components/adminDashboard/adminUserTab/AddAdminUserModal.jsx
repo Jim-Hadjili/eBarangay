@@ -154,11 +154,16 @@ export default function AddAdminUserModal({ isOpen, onClose, onSuccess }) {
                   id="phone"
                   name="phone"
                   value={formData.phone}
-                  onChange={handleChange}
-                  placeholder="e.g., 0912-345-6789"
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, "");
+                    handleChange({ target: { name: "phone", value } });
+                  }}
+                  placeholder="e.g., 09123456789"
                   className="px-3 py-2 text-sm text-gray-900 border border-gray-300 rounded-lg sm:px-4 sm:py-3 font-Lexend focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   disabled={loading}
                   required
+                  maxLength={11}
+                  pattern="[0-9]{11}"
                   autoComplete="off"
                 />
               </div>

@@ -6,7 +6,7 @@ import { getServiceIcon } from "../../../utils/serviceIcons";
 
 export default function DesktopTable({ services, onEdit, onDelete }) {
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 15;
+  const itemsPerPage = 10;
 
   // Calculate pagination
   const totalPages = Math.ceil(services.length / itemsPerPage);
@@ -27,14 +27,19 @@ export default function DesktopTable({ services, onEdit, onDelete }) {
                       Service Name
                     </span>
                   </th>
-                  <th className="px-6 py-4 text-left">
+                  <th className="px-6 py-4 text-center">
                     <span className="text-xs font-bold tracking-wider text-gray-700 uppercase font-Lexend">
                       Status
                     </span>
                   </th>
-                  <th className="px-6 py-4 text-left">
+                  <th className="px-6 py-4 text-center">
                     <span className="text-xs font-bold tracking-wider text-gray-700 uppercase font-Lexend">
                       Current Queue
+                    </span>
+                  </th>
+                  <th className="px-6 py-4 text-center">
+                    <span className="text-xs font-bold tracking-wider text-gray-700 uppercase font-Lexend">
+                      Queue Limit
                     </span>
                   </th>
                   <th className="px-6 py-4 text-right">
@@ -59,14 +64,14 @@ export default function DesktopTable({ services, onEdit, onDelete }) {
                             size="lg"
                           />
                         </div>
-                        <span className="font-semibold text-gray-900 font-Lexend">
+                        <span className="text-gray-900 font-Lexend">
                           {service.name}
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-5">
+                    <td className="px-6 py-5 text-center">
                       <span
-                        className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-semibold font-Lexend ${
+                        className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-Lexend ${
                           service.status === "active"
                             ? "bg-green-100 text-green-700 border border-green-200"
                             : "bg-gray-100 text-gray-700 border border-gray-200"
@@ -80,7 +85,7 @@ export default function DesktopTable({ services, onEdit, onDelete }) {
                         <span className="capitalize">{service.status}</span>
                       </span>
                     </td>
-                    <td className="px-6 py-5">
+                    <td className="flex justify-center px-6 py-5">
                       <div className="flex items-center gap-2">
                         <div
                           className={`flex items-center justify-center w-8 h-8 rounded-lg ${
@@ -98,6 +103,16 @@ export default function DesktopTable({ services, onEdit, onDelete }) {
                           waiting
                         </span>
                       </div>
+                    </td>
+                    <td className="gap-2 px-6 py-5 text-center ">
+                      <span className="text-gray-900 font-Lexend bg-green-100 px-2 py-1.5 rounded-lg">
+                        {service.queueLimit !== undefined
+                          ? service.queueLimit
+                          : "-"}
+                      </span>{" "}
+                      <span className="text-sm text-gray-600 font-Lexend">
+                        Patients Limit
+                      </span>
                     </td>
                     <td className="px-6 py-5">
                       <div className="flex items-center justify-end gap-2">

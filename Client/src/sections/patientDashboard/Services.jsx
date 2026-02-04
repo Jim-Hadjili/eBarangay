@@ -12,6 +12,7 @@ import CancelQueueModal from "../../components/modals/CancelQueueModal";
 import NotificationModal from "../../components/modals/NotificationModal";
 import LoadingModal from "../../components/modals/LoadingModal";
 import ViewMedicalRecordsButton from "../../components/patientDashboard/ViewMedicalRecordsButton";
+import Pagination from "../../components/ui/Pagination";
 
 export default function Services() {
   const { getFullName } = useAuth();
@@ -48,6 +49,16 @@ export default function Services() {
     title: "",
     message: "",
   });
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 9;
+
+  // Calculate pagination
+  const totalPages = Math.ceil(services.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedServices = services.slice(startIndex, endIndex);
 
   const handleServiceClick = async (service) => {
     setOpeningServiceLoading(true);
@@ -120,19 +131,31 @@ export default function Services() {
   return (
     <section className="w-full px-6 py-3 md:px-8 lg:px-20 lg:py-10">
       <div>
-        <h1 className="font-Lexend text-3xl">Welcome back, {getFullName()}!</h1>
+        <h1 className="text-3xl font-Lexend">Welcome back, {getFullName()}!</h1>
         <p>Manage Your Healthcare Appointment and Queue Status</p>
       </div>
-      <div className="mt-8 flex flex-col lg:flex-row gap-8">
-        <div className="flex flex-col flex-1">
+      <div className="flex flex-col gap-8 mt-8 lg:flex-row">
+        <div className="flex flex-col flex-1 gap-6">
           <ServicesList
             services={services}
+            paginatedServices={paginatedServices}
             loading={loading}
             selectedService={selectedService}
             onServiceClick={handleServiceClick}
           />
+          {!loading && services.length > 0 && (
+            <div className="hidden md:block">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                totalItems={services.length}
+                itemsPerPage={itemsPerPage}
+                onPageChange={setCurrentPage}
+              />
+            </div>
+          )}
         </div>
-        <div className="flex flex-col items-stretch">
+        <div className="flex flex-col gap-4">
           <QueueCard
             userQueue={userQueue}
             onCancel={() => setCancelModalOpen(true)}

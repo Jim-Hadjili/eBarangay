@@ -9,14 +9,14 @@ export default function MedicalRecordsPanel({
   onViewRecord,
 }) {
   return (
-    <div className="bg-white border border-gray-200 rounded-lg sm:rounded-xl shadow-sm overflow-hidden">
-      <div className="px-4 py-3 sm:px-6 sm:py-4 bg-green-200 border-b border-gray-200">
-        <h3 className="text-sm sm:text-base font-bold text-gray-900 font-Lexend">
+    <div className="flex flex-col h-full overflow-hidden bg-white border border-gray-200 rounded-lg shadow-sm sm:rounded-xl max-h-130 md:max-h-180">
+      <div className="px-4 py-3 bg-green-200 border-b border-gray-200 sm:px-6 sm:py-4">
+        <h3 className="text-sm font-bold text-gray-900 sm:text-base font-Lexend">
           MEDICAL RECORDS
         </h3>
       </div>
 
-      <div className="p-4 sm:p-6">
+      <div className="flex-1 p-4 overflow-y-auto sm:p-6">
         {patient ? (
           <div className="space-y-6">
             <PatientInfoSection patient={patient} />
@@ -28,12 +28,12 @@ export default function MedicalRecordsPanel({
             />
           </div>
         ) : (
-          <div className="py-8 sm:py-12 text-center">
-            <FileText className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 text-gray-300" />
-            <p className="text-sm sm:text-base font-bold text-gray-900 font-Lexend mb-2">
+          <div className="flex flex-col items-center justify-center h-full text-center">
+            <FileText className="w-12 h-12 mb-3 text-gray-300 sm:w-16 sm:h-16" />
+            <p className="mb-2 text-sm font-bold text-gray-900 sm:text-base font-Lexend">
               No Medical Records
             </p>
-            <p className="text-xs sm:text-sm text-gray-500 font-Lexend">
+            <p className="text-xs text-gray-500 sm:text-sm font-Lexend">
               Select a patient to view their medical records
             </p>
           </div>

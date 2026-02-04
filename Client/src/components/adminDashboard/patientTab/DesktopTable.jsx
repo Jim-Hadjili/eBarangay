@@ -30,16 +30,16 @@ export default function DesktopTable({
                   <th className="px-6 py-4 text-xs font-bold tracking-wider text-left text-gray-700 uppercase font-Lexend">
                     Patient Name
                   </th>
-                  <th className="px-6 py-4 text-xs font-bold tracking-wider text-left text-gray-700 uppercase font-Lexend">
+                  <th className="px-6 py-4 text-xs font-bold tracking-wider text-center text-gray-700 uppercase font-Lexend">
                     Contact
                   </th>
-                  <th className="px-6 py-4 text-xs font-bold tracking-wider text-left text-gray-700 uppercase font-Lexend">
+                  <th className="px-6 py-4 text-xs font-bold tracking-wider text-center text-gray-700 uppercase font-Lexend">
                     Gender
                   </th>
-                  <th className="px-6 py-4 text-xs font-bold tracking-wider text-left text-gray-700 uppercase font-Lexend">
+                  <th className="px-6 py-4 text-xs font-bold tracking-wider text-center text-gray-700 uppercase font-Lexend">
                     Address
                   </th>
-                  <th className="px-6 py-4 text-xs font-bold tracking-wider text-left text-gray-700 uppercase font-Lexend">
+                  <th className="px-6 py-4 text-xs font-bold tracking-wider text-center text-gray-700 uppercase font-Lexend">
                     Registered Date
                   </th>
                   <th className="px-6 py-4 text-xs font-bold tracking-wider text-right text-gray-700 uppercase font-Lexend">
@@ -70,7 +70,7 @@ export default function DesktopTable({
                           )}
                         </button>
                         <div>
-                          <p className="font-semibold text-gray-900 font-Lexend">
+                          <p className="text-gray-900 font-Lexend">
                             {patient.name}
                           </p>
                           <p className="text-xs text-gray-500 font-Lexend">
@@ -79,16 +79,21 @@ export default function DesktopTable({
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-5 text-gray-700 font-Lexend">
+                    <td className="px-6 py-5 text-center text-gray-700 font-Lexend">
                       {patient.phone}
                     </td>
-                    <td className="px-6 py-5 text-gray-700 font-Lexend">
+                    <td className="px-6 py-5 text-center text-gray-700 font-Lexend">
                       {patient.gender}
                     </td>
-                    <td className="px-6 py-5 text-gray-700 font-Lexend">
-                      <span className="line-clamp-2">{patient.address}</span>
+                    <td className="px-6 py-5 text-center text-gray-700 font-Lexend">
+                      <span
+                        className="inline-block align-middle line-clamp-2 max-w-70"
+                        title={patient.address}
+                      >
+                        {patient.address}
+                      </span>
                     </td>
-                    <td className="px-6 py-5 text-gray-700 font-Lexend">
+                    <td className="px-6 py-5 text-center text-gray-700 font-Lexend">
                       {patient.registeredDate}
                     </td>
                     <td className="px-6 py-5">

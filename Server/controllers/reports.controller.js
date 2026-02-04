@@ -706,7 +706,6 @@ function generatePrintableHTML(report) {
   <!-- Footer -->
   <div class="footer">
     <p><strong>eBarangay Healthcare Queue Management System</strong></p>
-    <p>This is a computer-generated report. For inquiries, please contact the system administrator.</p>
     <p>Generated on: ${new Date().toLocaleString()}</p>
   </div>
 </body>

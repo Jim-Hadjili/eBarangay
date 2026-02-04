@@ -26,9 +26,9 @@ export default function MobileTable({ services, onEdit, onDelete }) {
               style={{ animationDelay: `${index * 50}ms` }}
             >
               {/* Card Header */}
-              <div className="flex items-center justify-between p-4 border-b border-gray-100 bg-linear-to-r from-gray-50 to-white">
+              <div className="flex items-center justify-between p-4 border-b border-gray-100 bg-green-50">
                 <div className="flex items-center flex-1 min-w-0 gap-3">
-                  <div className="flex items-center justify-center w-12 h-12 text-green-600 rounded-lg bg-linear-to-br from-green-50 to-green-100 shrink-0">
+                  <div className="flex items-center justify-center w-12 h-12 text-green-600 bg-green-200 rounded-lg shrink-0">
                     <FontAwesomeIcon icon={getServiceIcon(service)} size="lg" />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -48,7 +48,7 @@ export default function MobileTable({ services, onEdit, onDelete }) {
                       Status
                     </p>
                     <span
-                      className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-semibold font-Lexend ${
+                      className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-Lexend ${
                         service.status === "active"
                           ? "bg-green-100 text-green-700 border border-green-200"
                           : "bg-gray-100 text-gray-700 border border-gray-200"
@@ -89,18 +89,35 @@ export default function MobileTable({ services, onEdit, onDelete }) {
                   </div>
                 </div>
 
+                {/* Queue Limit */}
+                <div className="space-y-1">
+                  <p className="text-xs font-semibold tracking-wide text-gray-500 uppercase font-Lexend">
+                    Queue Limit
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <span className="px-2 py-1 font-bold text-gray-900 bg-green-100 rounded-lg text-md font-Lexend">
+                      {service.queueLimit !== undefined
+                        ? service.queueLimit
+                        : "-"}
+                    </span>
+                    <span className="text-sm text-gray-600 font-Lexend">
+                      Patients Limit
+                    </span>
+                  </div>
+                </div>
+
                 {/* Action Buttons */}
                 <div className="flex gap-2 pt-2">
                   <button
                     onClick={() => onEdit && onEdit(service)}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-blue-700 font-semibold bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 hover:border-blue-300 transition-all duration-200 font-Lexend"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 hover:border-blue-300 transition-all duration-200 font-Lexend"
                   >
                     <Edit size={18} strokeWidth={2} />
                     <span>Edit</span>
                   </button>
                   <button
                     onClick={() => onDelete && onDelete(service)}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-red-700 font-semibold bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 hover:border-red-300 transition-all duration-200 font-Lexend"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-red-700 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 hover:border-red-300 transition-all duration-200 font-Lexend"
                   >
                     <Trash2 size={18} strokeWidth={2} />
                     <span>Delete</span>

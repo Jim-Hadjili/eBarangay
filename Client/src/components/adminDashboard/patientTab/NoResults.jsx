@@ -14,7 +14,7 @@ export default function NoResults({ searchQuery, onClear }) {
       </p>
       <button
         onClick={onClear}
-        className="inline-flex items-center gap-2 px-5 py-2.5 text-green-600 font-semibold bg-green-100 border-2 border-green-400 rounded-lg hover:bg-green-200 transition-all duration-200 font-Lexend"
+        className="inline-flex items-center gap-2 px-5 py-2.5 text-green-600 cursor-pointer bg-green-100 border-2 border-green-400 rounded-lg hover:bg-green-200 transition-all duration-200 font-Lexend"
       >
         Clear Search
       </button>

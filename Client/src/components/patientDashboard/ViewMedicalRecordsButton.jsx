@@ -12,7 +12,7 @@ export default function ViewMedicalRecordsButton() {
   return (
     <button
       onClick={handleClick}
-      className="group cursor-pointer mt-4 relative flex flex-col items-start justify-between w-full h-full gap-3 p-6 text-left transition-all duration-200 bg-white border border-gray-200 shadow-sm hover:shadow-lg hover:border-green-400 hover:-translate-y-0.5 rounded-2xl overflow-hidden"
+      className="group cursor-pointer relative flex flex-col items-start max-h-80 justify-between w-full gap-3 p-6 text-left transition-all duration-200 bg-white border border-gray-200 shadow-sm hover:shadow-lg hover:border-green-400 hover:-translate-y-0.5 rounded-2xl overflow-hidden"
     >
       {/* Subtle gradient overlay on hover */}
       <div className="absolute inset-0 transition-opacity duration-200 opacity-0 bg-linear-to-br from-green-50 to-transparent group-hover:opacity-100" />
@@ -25,7 +25,7 @@ export default function ViewMedicalRecordsButton() {
         </div>
 
         {/* Text content */}
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-2 mb-5">
           <h3 className="text-lg font-semibold text-gray-800 transition-colors group-hover:text-green-600">
             Medical Records
           </h3>
