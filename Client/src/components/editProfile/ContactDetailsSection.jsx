@@ -66,6 +66,20 @@ export default function ContactDetailsSection({ formData, onChange }) {
           className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
         />
       </div>
+
+      <div>
+        <label className="block mb-2 text-sm font-medium text-gray-700">
+          Address
+        </label>
+        <textarea
+          name="address"
+          value={formData.address}
+          onChange={onChange}
+          placeholder="Enter your full address"
+          rows="3"
+          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
+        />
+      </div>
     </div>
   );
 }

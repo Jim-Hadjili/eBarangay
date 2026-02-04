@@ -8,11 +8,13 @@ const {
   deletePatient,
   updateProfile,
   uploadProfileImage,
+  getCurrentUser,
 } = require("../controllers/auth.controller");
 const auth = require("../middlewares/auth.middleware");
 
 router.post("/login", login);
 router.post("/register", register);
+router.get("/me", auth, getCurrentUser);
 router.post("/add-admin", auth, addAdmin);
 router.delete("/delete-admin/:userId", auth, deleteAdmin);
 router.delete("/delete-patient/:userId", auth, deletePatient);

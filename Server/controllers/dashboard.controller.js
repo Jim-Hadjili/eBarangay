@@ -97,6 +97,9 @@ exports.getAdminUsers = async (req, res) => {
         profileImage: user.profileImage,
         address: user.address || "N/A",
         gender: user.gender || "N/A",
+        dateOfBirth: user.dateOfBirth
+          ? new Date(user.dateOfBirth).toISOString().split("T")[0]
+          : "N/A",
       })),
     });
   } catch (err) {
@@ -123,6 +126,10 @@ exports.getPatients = async (req, res) => {
       gender: patient.gender || "N/A",
       address: patient.address || "N/A",
       profileImage: patient.profileImage || null,
+      priorityStatus: patient.priorityStatus || "None",
+      dateOfBirth: patient.dateOfBirth
+        ? new Date(patient.dateOfBirth).toISOString().split("T")[0]
+        : "N/A",
     }));
 
     res.json({

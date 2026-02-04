@@ -8,6 +8,8 @@ export const useEditProfileForm = (user) => {
     gender: "",
     phone: "",
     email: "",
+    address: "",
+    priorityStatus: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -22,9 +24,26 @@ export const useEditProfileForm = (user) => {
         gender: user.gender || "",
         phone: user.phone || "",
         email: user.email || "",
+        address: user.address || "",
+        priorityStatus: user.priorityStatus || "None",
       });
     }
   }, [user]);
+
+  const calculateAge = (birthDate) => {
+    const today = new Date();
+    const birth = new Date(birthDate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birth.getDate())
+    ) {
+      age--;
+    }
+    return age;
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -32,6 +51,19 @@ export const useEditProfileForm = (user) => {
       ...prev,
       [name]: value,
     }));
+  };
+
+  const validateSeniorCitizen = () => {
+    if (formData.priorityStatus === "Senior Citizen") {
+      if (!formData.dateOfBirth) {
+        return "Date of birth is required for Senior Citizen status";
+      }
+      const age = calculateAge(formData.dateOfBirth);
+      if (age < 60) {
+        return "Senior Citizen status requires age 60 or above";
+      }
+    }
+    return null;
   };
 
   const buildFormData = (profileImage, passwordData, hasPasswordData) => {
@@ -64,5 +96,6 @@ export const useEditProfileForm = (user) => {
     setIsSubmitting,
     handleInputChange,
     buildFormData,
+    validateSeniorCitizen,
   };
 };

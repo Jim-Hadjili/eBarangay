@@ -12,17 +12,20 @@ export default function Header({ onAddClick }) {
             Manage admin accounts and permissions
           </p>
         </div>
-        <button
-          onClick={onAddClick}
-          className="flex items-center justify-center gap-2 px-5 py-3 text-green-600 transition-all duration-200 bg-green-100 border-2 border-green-400 cursor-pointer group rounded-xl hover:shadow-lg hover:bg-green-200 font-Lexend whitespace-nowrap"
-        >
-          <Plus
-            size={20}
-            strokeWidth={2.5}
-            className="transition-transform duration-200 group-hover:rotate-90"
-          />
-          <span className="text-sm sm:text-base">Add Admin User</span>
-        </button>
+        <div className="w-full flex sm:w-auto sm:block">
+          <button
+            onClick={onAddClick}
+            className="flex items-center justify-center gap-2 px-5 py-3 text-green-600 transition-all duration-200 bg-green-100 border-2 border-green-400 cursor-pointer group rounded-xl hover:shadow-lg hover:bg-green-200 font-Lexend whitespace-nowrap ml-auto w-auto sm:w-auto"
+            style={{ minWidth: 0 }}
+          >
+            <Plus
+              size={20}
+              strokeWidth={2.5}
+              className="transition-transform duration-200 group-hover:rotate-90"
+            />
+            <span className="text-sm sm:text-base">Add New Admin</span>
+          </button>
+        </div>
       </div>
     </>
   );

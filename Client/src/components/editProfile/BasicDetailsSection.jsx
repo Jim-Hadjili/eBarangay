@@ -1,4 +1,16 @@
-export default function BasicDetailsSection({ formData, onChange }) {
+export default function BasicDetailsSection({ formData, onChange, user }) {
+  // Check if user is patient (not Admin or Super Admin)
+  const isPatient = user?.userType === "Patient";
+
+  // Check if current priority status is Senior Citizen
+  const isSeniorCitizen = user?.priorityStatus === "Senior Citizen";
+
+  // Determine if Date of Birth should be disabled
+  const isDateOfBirthDisabled = isSeniorCitizen;
+
+  // Determine if Priority Status should be disabled
+  const isPriorityStatusDisabled = isSeniorCitizen;
+
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 mb-5">
@@ -50,13 +62,21 @@ export default function BasicDetailsSection({ formData, onChange }) {
       <div>
         <label className="block mb-2 text-sm font-medium text-gray-700">
           Date of Birth
+          {isDateOfBirthDisabled && (
+            <span className="ml-2 text-xs text-gray-500">
+              (Cannot be changed for Senior Citizens)
+            </span>
+          )}
         </label>
         <input
           type="date"
           name="dateOfBirth"
           value={formData.dateOfBirth}
           onChange={onChange}
-          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+          disabled={isDateOfBirthDisabled}
+          className={`w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+            isDateOfBirthDisabled ? "bg-gray-100 cursor-not-allowed" : ""
+          }`}
         />
       </div>
 
@@ -76,6 +96,41 @@ export default function BasicDetailsSection({ formData, onChange }) {
           <option value="Other">Other</option>
         </select>
       </div>
+
+      {/* Priority Status - Only for Patients */}
+      {isPatient && (
+        <div>
+          <label className="block mb-2 text-sm font-medium text-gray-700">
+            Priority Status
+            {isPriorityStatusDisabled && (
+              <span className="ml-2 text-xs text-gray-500">
+                (Cannot be changed once set to Senior Citizen)
+              </span>
+            )}
+          </label>
+          <select
+            name="priorityStatus"
+            value={formData.priorityStatus}
+            onChange={onChange}
+            disabled={isPriorityStatusDisabled}
+            className={`w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+              isPriorityStatusDisabled ? "bg-gray-100 cursor-not-allowed" : ""
+            }`}
+          >
+            <option value="None">None</option>
+            <option value="PWD">PWD (Person with Disability)</option>
+            <option value="Senior Citizen">
+              Senior Citizen (60+ years old)
+            </option>
+          </select>
+          {formData.priorityStatus === "Senior Citizen" && (
+            <p className="mt-1 text-xs text-blue-600">
+              Note: You must be 60 years or older to select Senior Citizen
+              status
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 }

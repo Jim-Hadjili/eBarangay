@@ -72,6 +72,21 @@ export default function AdminProfileModal({ isOpen, onClose, admin }) {
                   </p>
                 </div>
               </div>
+              {admin.address && (
+                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center justify-center w-8 h-8 bg-orange-100 rounded-lg shrink-0">
+                    <MapPin size={16} className="text-orange-600" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium text-gray-500 font-Lexend">
+                      Address
+                    </p>
+                    <p className="text-sm text-gray-900 font-Lexend">
+                      {admin.address}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -97,21 +112,19 @@ export default function AdminProfileModal({ isOpen, onClose, admin }) {
                 </div>
               )}
 
-              {admin.address && (
-                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                  <div className="flex items-center justify-center w-8 h-8 bg-orange-100 rounded-lg shrink-0">
-                    <MapPin size={16} className="text-orange-600" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-gray-500 font-Lexend">
-                      Address
-                    </p>
-                    <p className="text-sm text-gray-900 font-Lexend">
-                      {admin.address}
-                    </p>
-                  </div>
+              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center justify-center w-8 h-8 bg-pink-100 rounded-lg shrink-0">
+                  <Calendar size={16} className="text-pink-600" />
                 </div>
-              )}
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium text-gray-500 font-Lexend">
+                    Date of Birth
+                  </p>
+                  <p className="text-sm text-gray-900 font-Lexend">
+                    {admin.dateOfBirth || "N/A"}
+                  </p>
+                </div>
+              </div>
 
               <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                 <div className="flex items-center justify-center w-8 h-8 bg-indigo-100 rounded-lg shrink-0">

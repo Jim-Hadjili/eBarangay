@@ -16,16 +16,21 @@ export default function OverviewTab() {
   return (
     <div className="min-h-screen bg-white">
       <div className="w-full px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-10 lg:px-16 lg:py-12 xl:px-20">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6">
           <OverviewHeader />
-          <button
-            onClick={() => setIsReportModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-2 font-medium text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700"
-          >
-            <FontAwesomeIcon icon={faChartBar} />
-            <span className="hidden sm:inline">Generate Report</span>
-            <span className="sm:hidden">Report</span>
-          </button>
+          <div className="w-full flex sm:w-auto sm:block">
+            <button
+              onClick={() => setIsReportModalOpen(true)}
+              className="flex items-center justify-center gap-2 px-5 py-3 text-blue-600 transition-all duration-200 bg-blue-100 border-2 border-blue-400 cursor-pointer group rounded-xl hover:shadow-lg hover:bg-blue-200 font-Lexend whitespace-nowrap ml-auto w-auto sm:w-auto"
+              style={{ minWidth: 0 }}
+            >
+              <FontAwesomeIcon
+                icon={faChartBar}
+                className="sm:w-5 sm:h-5 transition-transform duration-200 group-hover:-translate-x-1"
+              />
+              <span>Generate Report</span>
+            </button>
+          </div>
         </div>
         <ErrorAlert error={error} />
         <OverviewStatsGrid overviewData={overviewData} />

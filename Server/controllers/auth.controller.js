@@ -71,6 +71,7 @@ exports.login = async (req, res) => {
         phone: user.phone,
         gender: user.gender,
         address: user.address,
+        priorityStatus: user.priorityStatus,
       },
       process.env.JWT_SECRET,
       {
@@ -375,6 +376,9 @@ exports.updateProfile = async (req, res) => {
     if (phone !== undefined) updateData.phone = phone;
     if (dateOfBirth) updateData.dateOfBirth = dateOfBirth;
     if (gender) updateData.gender = gender;
+    if (req.body.priorityStatus !== undefined)
+      updateData.priorityStatus = req.body.priorityStatus;
+    if (req.body.address !== undefined) updateData.address = req.body.address;
 
     // Hash and update password if provided
     if (newPassword && currentPassword) {
@@ -424,6 +428,7 @@ exports.updateProfile = async (req, res) => {
         phone: updatedUser.phone,
         gender: updatedUser.gender,
         address: updatedUser.address,
+        priorityStatus: updatedUser.priorityStatus,
       },
       process.env.JWT_SECRET,
       {
@@ -444,6 +449,22 @@ exports.updateProfile = async (req, res) => {
     });
   } catch (err) {
     console.error("Update profile error:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+exports.getCurrentUser = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const user = await User.findById(userId).select("-password");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ user });
+  } catch (err) {
+    console.error("Get current user error:", err);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };

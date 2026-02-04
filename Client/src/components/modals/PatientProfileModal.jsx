@@ -1,5 +1,13 @@
 import Modal from "../ui/Modal";
-import { User, Mail, Phone, Calendar, MapPin, Users } from "lucide-react";
+import {
+  User,
+  Mail,
+  Phone,
+  Calendar,
+  MapPin,
+  Users,
+  Badge,
+} from "lucide-react";
 import { SOCKET_URL } from "../../hooks/usePatients";
 
 export default function PatientProfileModal({ isOpen, onClose, patient }) {
@@ -70,6 +78,19 @@ export default function PatientProfileModal({ isOpen, onClose, patient }) {
                   </p>
                 </div>
               </div>
+              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center justify-center w-8 h-8 bg-orange-100 rounded-lg shrink-0">
+                  <MapPin size={16} className="text-orange-600" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium text-gray-500 font-Lexend">
+                    Address
+                  </p>
+                  <p className="text-sm text-gray-900 font-Lexend">
+                    {patient.address}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -94,15 +115,29 @@ export default function PatientProfileModal({ isOpen, onClose, patient }) {
               </div>
 
               <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                <div className="flex items-center justify-center w-8 h-8 bg-orange-100 rounded-lg shrink-0">
-                  <MapPin size={16} className="text-orange-600" />
+                <div className="flex items-center justify-center w-8 h-8 bg-pink-100 rounded-lg shrink-0">
+                  <Calendar size={16} className="text-pink-600" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-medium text-gray-500 font-Lexend">
-                    Address
+                    Date of Birth
                   </p>
                   <p className="text-sm text-gray-900 font-Lexend">
-                    {patient.address}
+                    {patient.dateOfBirth || "N/A"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center justify-center w-8 h-8 bg-yellow-100 rounded-lg shrink-0">
+                  <Badge size={16} className="text-yellow-600" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium text-gray-500 font-Lexend">
+                    Priority Status
+                  </p>
+                  <p className="text-sm text-gray-900 font-Lexend">
+                    {patient.priorityStatus || "None"}
                   </p>
                 </div>
               </div>
