@@ -14,20 +14,17 @@ class SocketService {
     const socketURL = import.meta.env.VITE_API_URL.replace("/api", "");
 
     this.socket = io(socketURL, {
-      transports: ["websocket", "polling"],
+      transports: ["polling", "websocket"], // Start with polling for better Render compatibility
       reconnection: true,
-      reconnectionDelay: 1000,
-      reconnectionDelayMax: 5000,
-      reconnectionAttempts: 5,
-      timeout: 20000,
-    });
-
-    this.socket.on("connect", () => {
-      console.log("✅ Socket connected:", this.socket.id);
-    });
-
-    this.socket.on("disconnect", (reason) => {
-      console.log("❌ Socket disconnected:", reason);
+      reconnectionDelay: 2000,
+      reconnectionDelayMax: 10000,
+      reconnectionAttempts: 10,
+      timeout: 45000,
+      autoConnect: true,
+      forceNew: false,
+      multiplex: true,
+      upgrade: true,
+      rememberUpgrade: true,
     });
 
     this.socket.on("connect_error", (error) => {

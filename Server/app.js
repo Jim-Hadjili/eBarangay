@@ -12,12 +12,20 @@ connectDB();
 const app = express();
 const server = http.createServer(app);
 
-// Socket.io setup
+// Socket.io setup with production-ready configuration
 const io = new Server(server, {
   cors: {
     origin: "*", // Replace with your frontend URL in production
     methods: ["GET", "POST"],
+    credentials: true,
   },
+  transports: ["polling", "websocket"], // Polling first for Render compatibility
+  allowEIO3: true,
+  pingTimeout: 60000,
+  pingInterval: 25000,
+  upgradeTimeout: 30000,
+  maxHttpBufferSize: 1e6,
+  connectTimeout: 45000,
 });
 
 // Make io accessible to routes
