@@ -7,6 +7,60 @@ const {
 } = require("../utils/socketNotifications");
 const { emitDashboardUpdate } = require("./dashboard.controller");
 const QueueResponseFormatter = require("../helpers/queueHelpers/queueResponseFormatter");
+const User = require("../models/userSchema");
+const crypto = require("crypto");
+
+/**
+ * Admin: add an existing registered patient to a queue
+ */
+exports.adminJoinExistingQueue = async (req, res) => {
+  try {
+    const { patientId, serviceId } = req.body;
+
+    if (!patientId || !serviceId) {
+      return res
+        .status(400)
+        .json({ message: "patientId and serviceId are required" });
+    }
+
+    const patient = await User.findById(patientId);
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    const result = await QueueService.joinQueue(patientId, serviceId);
+
+    await ActivityLogger.log({
+      activityType: "queue_joined",
+      description: `${patient.firstName} ${patient.lastName} added to ${result.service.name} queue by admin`,
+      performedBy: req.user.id,
+      service: serviceId,
+      queue: result.queueEntry._id,
+      metadata: {
+        queueCode: result.queueCode,
+        queueNumber: result.queueNumber,
+        adminAssigned: true,
+      },
+    });
+
+    const io = req.app.get("io");
+    if (io) {
+      emitDashboardUpdate(io);
+      io.to("dashboard").emit("activityUpdate");
+      notifyWaitingTimeUpdate(io, serviceId);
+    }
+
+    res.status(201).json({
+      queueCode: result.queueCode,
+      queueNumber: result.queueNumber,
+      serviceName: result.service.name,
+      patientName: `${patient.firstName} ${patient.lastName}`,
+    });
+  } catch (err) {
+    const status = err.status || 500;
+    res.status(status).json({ message: err.message || "Server error" });
+  }
+};
 
 /**
  * Join a queue for a specific service
@@ -57,6 +111,87 @@ exports.joinQueue = async (req, res) => {
       message: err.message || "Server error",
       ...(err.queueCode && { queueCode: err.queueCode }),
     });
+  }
+};
+
+/**
+ * Admin: register a walk-in (unregistered) patient and add them to a queue
+ */
+exports.joinWalkInQueue = async (req, res) => {
+  try {
+    const {
+      firstName,
+      lastName,
+      gender,
+      dateOfBirth,
+      priorityStatus,
+      address,
+      serviceId,
+    } = req.body;
+
+    if (
+      !firstName ||
+      !lastName ||
+      !gender ||
+      !dateOfBirth ||
+      !address ||
+      !serviceId
+    ) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // Generate a unique throwaway email and random password for the walk-in record
+    const uniqueTag = crypto.randomBytes(6).toString("hex");
+    const generatedEmail = `walkin_${uniqueTag}@walkin.ebarangay.local`;
+    const generatedPassword = crypto.randomBytes(12).toString("hex");
+
+    // Create a User record for the walk-in patient
+    const patient = await User.create({
+      firstName,
+      lastName,
+      email: generatedEmail,
+      password: generatedPassword,
+      gender,
+      dateOfBirth: new Date(dateOfBirth),
+      priorityStatus: priorityStatus || "None",
+      address,
+      userType: "Patient",
+    });
+
+    // Join the queue using the existing service
+    const result = await QueueService.joinQueue(patient._id, serviceId);
+
+    // Log activity
+    await ActivityLogger.log({
+      activityType: "queue_joined",
+      description: `Walk-in patient ${firstName} ${lastName} added to ${result.service.name} queue by admin`,
+      performedBy: req.user.id,
+      service: serviceId,
+      queue: result.queueEntry._id,
+      metadata: {
+        queueCode: result.queueCode,
+        queueNumber: result.queueNumber,
+        walkIn: true,
+      },
+    });
+
+    // Emit socket updates
+    const io = req.app.get("io");
+    if (io) {
+      emitDashboardUpdate(io);
+      io.to("dashboard").emit("activityUpdate");
+      notifyWaitingTimeUpdate(io, serviceId);
+    }
+
+    res.status(201).json({
+      queueCode: result.queueCode,
+      queueNumber: result.queueNumber,
+      serviceName: result.service.name,
+      patientName: `${firstName} ${lastName}`,
+    });
+  } catch (err) {
+    const status = err.status || 500;
+    res.status(status).json({ message: err.message || "Server error" });
   }
 };
 

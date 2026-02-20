@@ -2,6 +2,8 @@ const router = require("express").Router();
 const {
   getServiceQueue,
   joinQueue,
+  joinWalkInQueue,
+  adminJoinExistingQueue,
   getUserQueue,
   cancelQueue,
   callNextInQueue,
@@ -21,6 +23,8 @@ router.get("/display", getQueueDisplay); // Public display for TV screens
 // Service-specific routes
 router.get("/service/:serviceId", getServiceQueue);
 router.post("/join", auth, joinQueue);
+router.post("/join-walk-in", auth, joinWalkInQueue); // Admin only - walk-in patient
+router.post("/admin-join-existing", auth, adminJoinExistingQueue); // Admin only - existing patient
 router.get("/my-queue", auth, getUserQueue);
 router.get("/history", auth, getQueueHistory);
 router.delete("/cancel", auth, cancelQueue);

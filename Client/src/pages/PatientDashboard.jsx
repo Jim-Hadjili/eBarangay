@@ -27,8 +27,11 @@ export default function PatientDashboard() {
     }
     const userData = getUserFromToken(token);
 
-    // Check if user is a patient (not admin)
-    if (userData?.userType === "Admin") {
+    // Check if user is a patient (not admin or super admin)
+    if (
+      userData?.userType === "Admin" ||
+      userData?.userType === "Super Admin"
+    ) {
       navigate("/AdminDashboard");
       return;
     }
