@@ -4,6 +4,7 @@ import AuthForm from "./AuthForm";
 import { register } from "../../services/authService";
 import { Link } from "react-router-dom";
 import TermsModal from "../modals/TermsModal";
+import Modal from "../ui/Modal";
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
@@ -26,6 +27,8 @@ export default function SignUp() {
   const [ageValidationError, setAgeValidationError] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [pendingEmail, setPendingEmail] = useState("");
 
   useEffect(() => {
     if (success || error) {
@@ -117,7 +120,8 @@ export default function SignUp() {
 
     try {
       await register(formData);
-      setSuccess(true);
+      setPendingEmail(formData.email);
+      setShowVerificationModal(true);
       setFormData({
         firstName: "",
         lastName: "",
@@ -145,10 +149,10 @@ export default function SignUp() {
         title="Create an Account"
         buttonText="Create Account"
         onSubmit={handleSubmit}
-        success={success}
+        success={false}
         error={error}
         loading={loading}
-        loadingText="Creating account..."
+        loadingText="Sending verification email…"
       >
         {/* First Name and Last Name Row */}
         <div className="grid grid-cols-2 gap-2">
@@ -475,6 +479,56 @@ export default function SignUp() {
         isOpen={showTermsModal}
         onClose={() => setShowTermsModal(false)}
       />
+
+      {/* Email Verification Sent Modal */}
+      <Modal
+        isOpen={showVerificationModal}
+        onClose={() => setShowVerificationModal(false)}
+        size="default"
+      >
+        <div className="w-full text-center">
+          {/* Icon */}
+          <div className="flex justify-center mb-4">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-8 h-8 text-green-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"
+                />
+              </svg>
+            </div>
+          </div>
+
+          <h2 className="text-lg font-bold text-gray-800 font-Lexend mb-2">
+            Check Your Email!
+          </h2>
+          <p className="text-sm text-gray-600 mb-1">
+            We&apos;ve sent a verification link to:
+          </p>
+          <p className="text-sm font-semibold text-green-600 mb-4 break-all">
+            {pendingEmail}
+          </p>
+          <p className="text-xs text-gray-500 mb-6">
+            Click the link in the email to complete your registration. The link
+            expires in&nbsp;<strong>1 hour</strong>.
+          </p>
+
+          <button
+            onClick={() => setShowVerificationModal(false)}
+            className="w-full py-2.5 font-semibold text-sm text-white bg-linear-to-r from-green-400 to-green-500 rounded-xl hover:from-green-500 hover:to-green-600 shadow-lg transition-all hover:-translate-y-0.5 cursor-pointer"
+          >
+            Got it!
+          </button>
+        </div>
+      </Modal>
 
       {/* Divider */}
       <div className="flex items-center my-2">

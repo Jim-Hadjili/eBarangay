@@ -3,6 +3,7 @@ const router = require("express").Router();
 const {
   login,
   register,
+  verifyEmail,
   addAdmin,
   deleteAdmin,
   deletePatient,
@@ -14,6 +15,7 @@ const auth = require("../middlewares/auth.middleware");
 
 router.post("/login", login);
 router.post("/register", register);
+router.get("/verify-email", verifyEmail);
 router.get("/me", auth, getCurrentUser);
 router.post("/add-admin", auth, addAdmin);
 router.delete("/delete-admin/:userId", auth, deleteAdmin);

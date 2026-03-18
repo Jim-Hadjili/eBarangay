@@ -27,6 +27,19 @@ export const register = async (formData) => {
   return data;
 };
 
+export const verifyEmail = async (token) => {
+  const response = await fetch(
+    `${import.meta.env.VITE_API_URL}/auth/verify-email?token=${encodeURIComponent(token)}`,
+    { method: "GET" },
+  );
+
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.message || "Email verification failed");
+  }
+  return data;
+};
+
 export const login = async ({ email, password }) => {
   const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
     method: "POST",

@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AuthLayout from "./pages/Auth";
 import SignIn from "./components/auth/SignIn";
 import SignUp from "./components/auth/SignUp";
+import VerifyEmail from "./pages/VerifyEmail";
 import PatientDashboard from "./pages/PatientDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminQueueControl from "./pages/AdminQueueControl";
@@ -29,6 +30,8 @@ export default function App() {
         <Route path="/AdminQueueControl" element={<AdminQueueControl />} />
         {/* Public route for Queue Display (TV screen) */}
         <Route path="/queue-display" element={<QueueDisplay />} />
+        {/* Email verification route */}
+        <Route path="/verify-email" element={<VerifyEmail />} />
       </Routes>
     </BrowserRouter>
   );

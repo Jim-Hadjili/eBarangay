@@ -1,9 +1,12 @@
 // controllers/auth.controller.js
+const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/userSchema");
+const PendingRegistration = require("../models/pendingRegistrationSchema");
 const { emitDashboardUpdate } = require("./dashboard.controller");
 const ActivityLogger = require("../utils/activityLogger");
+const { sendVerificationEmail } = require("../utils/emailService");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
@@ -115,9 +118,89 @@ exports.register = async (req, res) => {
     if (!firstName || !lastName || !email || !password)
       return res.status(400).json({ message: "Required fields are missing" });
 
+    // Check if a verified account already exists
     const exists = await User.findOne({ email });
     if (exists) return res.status(400).json({ message: "User already exists" });
 
+    // Remove any previous pending registration for this email
+    await PendingRegistration.deleteMany({ "data.email": email });
+
+    // Generate a cryptographically secure token
+    const rawToken = crypto.randomBytes(32).toString("hex");
+    const hashedToken = crypto
+      .createHash("sha256")
+      .update(rawToken)
+      .digest("hex");
+
+    // Store registration data pending email verification
+    await PendingRegistration.create({
+      token: hashedToken,
+      data: {
+        firstName,
+        lastName,
+        email,
+        password,
+        phone: phone || null,
+        dateOfBirth: dateOfBirth || null,
+        gender: gender || null,
+        address: address || null,
+        priorityStatus: priorityStatus || "None",
+      },
+    });
+
+    // Send verification email
+    await sendVerificationEmail(email, firstName, rawToken);
+
+    res.status(200).json({
+      message:
+        "Verification email sent. Please check your inbox and click the link to complete registration.",
+    });
+  } catch (err) {
+    console.error("Register error:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+exports.verifyEmail = async (req, res) => {
+  try {
+    const { token } = req.query;
+
+    if (!token)
+      return res
+        .status(400)
+        .json({ message: "Verification token is required" });
+
+    // Hash the incoming token to compare with the stored hash
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+    const pending = await PendingRegistration.findOne({ token: hashedToken });
+    if (!pending)
+      return res
+        .status(400)
+        .json({ message: "Invalid or expired verification link." });
+
+    const {
+      firstName,
+      lastName,
+      email,
+      password,
+      phone,
+      dateOfBirth,
+      gender,
+      address,
+      priorityStatus,
+    } = pending.data;
+
+    // Guard against race condition: account already created
+    const exists = await User.findOne({ email });
+    if (exists) {
+      await PendingRegistration.deleteOne({ token: hashedToken });
+      return res
+        .status(400)
+        .json({ message: "Account already exists. Please sign in." });
+    }
+
+    // Create the verified user account
     const user = await User.create({
       firstName,
       lastName,
@@ -131,6 +214,9 @@ exports.register = async (req, res) => {
       priorityStatus: priorityStatus || "None",
     });
 
+    // Remove the used pending registration
+    await PendingRegistration.deleteOne({ token: hashedToken });
+
     // Log activity
     await ActivityLogger.log({
       activityType: "patient_registered",
@@ -138,7 +224,7 @@ exports.register = async (req, res) => {
       targetUser: user._id,
     });
 
-    // Emit dashboard update and activity update
+    // Emit dashboard update
     const io = req.app.get("io");
     if (io) {
       await emitDashboardUpdate(io);
@@ -146,13 +232,11 @@ exports.register = async (req, res) => {
     }
 
     res.status(201).json({
-      message: "User registered successfully",
+      message: "Email verified successfully. Your account has been created.",
       userId: user._id,
-      firstName: user.firstName,
-      lastName: user.lastName,
     });
   } catch (err) {
-    console.error("Register error:", err);
+    console.error("Verify email error:", err);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
