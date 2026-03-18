@@ -32,17 +32,29 @@ const io = new Server(server, {
 app.set("io", io);
 
 // Add CORS middleware
-const allowedOrigins = [process.env.CLIENT_URL || "http://localhost:5173"];
+const allowedOrigins = [
+  "https://ebarangay-healthcare.vercel.app", // production frontend (hardcoded fallback)
+  "http://localhost:5173",
+  "http://localhost:5000",
+];
+
+// Also add CLIENT_URL from env if it's different
+if (process.env.CLIENT_URL) {
+  const envOrigin = process.env.CLIENT_URL.replace(/\/$/, "");
+  if (!allowedOrigins.includes(envOrigin)) allowedOrigins.push(envOrigin);
+}
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (e.g. mobile apps, curl, Postman)
+      // Allow server-to-server or tool requests with no origin header
       if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin.replace(/\/$/, ""))) {
+      const normalized = origin.replace(/\/$/, "");
+      if (allowedOrigins.includes(normalized)) {
         return callback(null, true);
       }
-      callback(new Error(`CORS: origin ${origin} not allowed`));
+      // Return false (not an Error) so Express does NOT trigger the 500 error handler
+      return callback(null, false);
     },
     credentials: true,
   }),
