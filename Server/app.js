@@ -15,7 +15,7 @@ const server = http.createServer(app);
 // Socket.io setup with production-ready configuration
 const io = new Server(server, {
   cors: {
-    origin: "*", // Replace with your frontend URL in production
+    origin: process.env.CLIENT_URL || "http://localhost:5173",
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -32,9 +32,18 @@ const io = new Server(server, {
 app.set("io", io);
 
 // Add CORS middleware
+const allowedOrigins = [process.env.CLIENT_URL || "http://localhost:5173"];
+
 app.use(
   cors({
-    origin: "*",
+    origin: (origin, callback) => {
+      // Allow requests with no origin (e.g. mobile apps, curl, Postman)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin.replace(/\/$/, ""))) {
+        return callback(null, true);
+      }
+      callback(new Error(`CORS: origin ${origin} not allowed`));
+    },
     credentials: true,
   }),
 );
