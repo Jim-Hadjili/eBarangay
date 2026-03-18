@@ -1,16 +1,25 @@
 // utils/emailService.js
 const nodemailer = require("nodemailer");
 
-const transporter = nodemailer.createTransport({
-  service: process.env.EMAIL_SERVICE || "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
-
 exports.sendVerificationEmail = async (to, firstName, rawToken) => {
-  const verifyUrl = `${process.env.CLIENT_URL}/verify-email?token=${rawToken}`;
+  const { EMAIL_SERVICE, EMAIL_USER, EMAIL_PASS, CLIENT_URL } = process.env;
+
+  if (!EMAIL_USER || !EMAIL_PASS) {
+    throw new Error(
+      "Email configuration is missing. Set EMAIL_USER and EMAIL_PASS in environment variables.",
+    );
+  }
+
+  // Create transporter lazily so env vars are guaranteed to be loaded
+  const transporter = nodemailer.createTransport({
+    service: EMAIL_SERVICE || "gmail",
+    auth: {
+      user: EMAIL_USER,
+      pass: EMAIL_PASS,
+    },
+  });
+
+  const verifyUrl = `${CLIENT_URL}/verify-email?token=${rawToken}`;
 
   await transporter.sendMail({
     from: `"eBarangay Healthcare" <${process.env.EMAIL_USER}>`,
