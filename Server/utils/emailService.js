@@ -2,7 +2,7 @@
 const nodemailer = require("nodemailer");
 
 exports.sendVerificationEmail = async (to, firstName, rawToken) => {
-  const { EMAIL_SERVICE, EMAIL_USER, EMAIL_PASS, CLIENT_URL } = process.env;
+  const { EMAIL_USER, EMAIL_PASS, CLIENT_URL } = process.env;
 
   if (!EMAIL_USER || !EMAIL_PASS) {
     throw new Error(
@@ -10,16 +10,29 @@ exports.sendVerificationEmail = async (to, firstName, rawToken) => {
     );
   }
 
-  // Create transporter lazily so env vars are guaranteed to be loaded
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 465,
-    secure: true, // SSL on port 465
+    secure: true,
     auth: {
       user: EMAIL_USER,
       pass: EMAIL_PASS,
     },
+    tls: {
+      rejectUnauthorized: false, // Required on some cloud hosts
+    },
+    connectionTimeout: 10000, // 10 seconds
+    greetingTimeout: 10000,
+    socketTimeout: 15000,
   });
+
+  // Verify SMTP connection before attempting to send
+  try {
+    await transporter.verify();
+  } catch (verifyErr) {
+    console.error("SMTP verify failed:", verifyErr.message);
+    throw new Error(`SMTP connection failed: ${verifyErr.message}`);
+  }
 
   const verifyUrl = `${CLIENT_URL}/verify-email?token=${rawToken}`;
 
