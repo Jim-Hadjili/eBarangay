@@ -1,21 +1,29 @@
 // utils/emailService.js
-const { Resend } = require("resend");
 
 exports.sendVerificationEmail = async (to, firstName, rawToken) => {
-  const { RESEND_API_KEY, CLIENT_URL } = process.env;
+  const { BREVO_API_KEY, EMAIL_USER, CLIENT_URL } = process.env;
 
-  if (!RESEND_API_KEY) {
-    throw new Error("RESEND_API_KEY is missing from environment variables.");
+  if (!BREVO_API_KEY) {
+    throw new Error("BREVO_API_KEY is missing from environment variables.");
   }
 
-  const resend = new Resend(RESEND_API_KEY);
   const verifyUrl = `${CLIENT_URL}/verify-email?token=${rawToken}`;
 
-  const { error } = await resend.emails.send({
-    from: "eBarangay Healthcare <onboarding@resend.dev>",
-    to,
-    subject: "Verify Your Email – eBarangay Healthcare",
-    html: `
+  const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+    method: "POST",
+    headers: {
+      accept: "application/json",
+      "api-key": BREVO_API_KEY,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      sender: {
+        name: "eBarangay Healthcare",
+        email: EMAIL_USER || "ebarangayhealthcare@gmail.com",
+      },
+      to: [{ email: to }],
+      subject: "Verify Your Email – eBarangay Healthcare",
+      htmlContent: `
 <!DOCTYPE html>
 <html>
 <head><meta charset="UTF-8" /></head>
@@ -50,12 +58,15 @@ exports.sendVerificationEmail = async (to, firstName, rawToken) => {
     </p>
   </div>
 </body>
-</html>
-    `,
+</html>`,
+    }),
   });
 
-  if (error) {
-    console.error("Resend error:", error);
-    throw new Error(`Failed to send verification email: ${error.message}`);
+  if (!response.ok) {
+    const errBody = await response.json().catch(() => ({}));
+    console.error("Brevo error:", errBody);
+    throw new Error(
+      `Failed to send verification email: ${errBody.message || response.statusText}`,
+    );
   }
 };
