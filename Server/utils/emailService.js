@@ -12,7 +12,9 @@ exports.sendVerificationEmail = async (to, firstName, rawToken) => {
 
   // Create transporter lazily so env vars are guaranteed to be loaded
   const transporter = nodemailer.createTransport({
-    service: EMAIL_SERVICE || "gmail",
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true, // SSL on port 465
     auth: {
       user: EMAIL_USER,
       pass: EMAIL_PASS,
